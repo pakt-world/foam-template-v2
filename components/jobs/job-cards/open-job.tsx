@@ -38,9 +38,9 @@ export const OpenJobCard: React.FC<OpenJobProps> = ({ creator, price, skills, ti
         </div>
       </div>
       <div className="flex items-center gap-2 justify-between mt-auto">
-        <div className="flex items-center gap-2">
+        <div className="flex items-end gap-2 flex-wrap max-w-full">
           {skills.map((skill) => (
-            <span key={skill} className="px-4 capitalize rounded-full py-0.5 bg-slate-100">
+            <span key={skill} className="px-4 capitalize rounded-full py-0.5 bg-slate-100 whitespace-nowrap">
               {skill}
             </span>
           ))}
