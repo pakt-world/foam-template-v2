@@ -14,14 +14,15 @@ import { Loader } from 'lucide-react';
 export const Feeds = () => {
   const { _id: loggedInUser } = useUserState();
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [currentData, setCurrentData] = useState([]);
   const {
     data: timelineData,
     refetch: feedRefetch,
     isLoading,
+    isFetching,
     isError,
   } = useGetTimeline({ page: currentPage, limit: 10, filter: { isOwner: true, type: `${FEED_TYPES.JOB_DELIVERABLE_UPDATE},${FEED_TYPES.JOB_APPLICATION_SUBMITTED},${FEED_TYPES.JOB_CANCELLED},${FEED_TYPES.JOB_COMPLETION},${FEED_TYPES.JOB_INVITATION_ACCEPTED},${FEED_TYPES.JOB_INVITATION_DECLINED},${FEED_TYPES.JOB_INVITATION_RECEIVED},${FEED_TYPES.PUBLIC_JOB_CREATED},${FEED_TYPES.PUBLIC_JOB_FILLED}`, isPublic: true } });
-  const totalPage = timelineData?.pages || 1;
   const callback = async () => {
     await Promise.all([
       feedRefetch()
@@ -39,8 +40,16 @@ export const Feeds = () => {
   };
 
   const fetchMore = () => {
-    setCurrentPage(currentPage + 1);
+    console.log("next-==<", currentPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
+
+  useEffect(() => {
+    if (currentPage)
+      feedRefetch();
+  }, [currentPage])
 
   useEffect(() => {
     // @ts-ignore
@@ -49,6 +58,8 @@ export const Feeds = () => {
       // @ts-ignore
       const newData = currentData.concat(timelineData?.data.filter(c => !allIds.includes(c._id)));
       setCurrentData(newData);
+      setTotalPages(timelineData.pages);
+      setCurrentPage(timelineData.page);
     }
   }, [timelineData, timelineData?.data]);
 
@@ -61,18 +72,18 @@ export const Feeds = () => {
     <div className="relative h-full">
       <div id="timeline-content" className="h-full overflow-y-auto scrollbar-hide [&>*]:mb-5 border border-line bg-white rounded-2xl p-4 w-full">
         <InfiniteScroll
-          scrollThreshold={0.8}
+          scrollThreshold={0.5}
           scrollableTarget="timeline-content"
-          dataLength={timelineData?.total ?? 1}
+          dataLength={timelineData?.total ?? 10}
           next={fetchMore}
-          hasMore={currentPage < totalPage}
+          hasMore={true}
           loader={<></>}
           className='mb-0'
         >
           <div className='[&>*]:mb-5'>
             {timelineFeeds}
           </div>
-          {isLoading && <div className='flex flex-row justify-center items-center w-full mx-auto text-center'><Loader size={25} className='text-black animate-spin text-center' /></div>}
+          {isFetching && <div className='flex flex-row justify-center items-center w-full mx-auto text-center'><Loader size={25} className='text-black animate-spin text-center' /></div>}
         </InfiniteScroll>
       </div>
       <div className="absolute left-0 right-0 -bottom-[0px] h-10 z-50 bg-gradient-to-b from-transparent via-transparent to-green-50 rounded-2xl"></div>

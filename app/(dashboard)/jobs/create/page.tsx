@@ -34,7 +34,7 @@ const schema = z.object({
   due: z.date({
     required_error: 'Due date is required',
   }),
-  jobType: z.string().nonempty({ message: 'Required' }),
+  jobType: z.string().default("freelance"),
   visibility: z.string().nonempty({ message: 'Required' }),
   thirdSkill: z.string().optional().default(''),
   secondSkill: z.string().optional().default(''),
@@ -340,7 +340,7 @@ export default function CreateJob() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <label className="text-sm text-body">Job Type</label>
                 <div className="relative">
                   <Controller
@@ -356,9 +356,9 @@ export default function CreateJob() {
                             <SelectItem value="freelance" className="hover:bg-[#ECFCE5] rounded py-2">
                               Freelance
                             </SelectItem>
-                            {/* <SelectItem value="project" className="hover:bg-[#ECFCE5] rounded py-2">
+                            <SelectItem value="project" className="hover:bg-[#ECFCE5] rounded py-2">
                               Project
-                            </SelectItem> */}
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       );
@@ -372,7 +372,7 @@ export default function CreateJob() {
                     )}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="ml-auto max-w-[250px] w-full border border-gray-300 rounded-xl mt-auto">

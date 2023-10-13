@@ -15,7 +15,7 @@ export const LeaderBoard = () => {
     position: i + 1,
   }));
   return (
-    <div className="flex flex-col h-fit w-full gap-2 bg-gradient-leaderboard rounded-2xl py-4">
+    <div className="flex flex-col h-fit w-full min-h-[450px] gap-2 bg-gradient-leaderboard rounded-2xl py-4">
       <div className="text-xl font-bold text-center text-white">Leaderboard</div>
 
       <div className=" text-white px-3 flex flex-col  relative gap-2 overflow-y-auto scrollbar-hide">
