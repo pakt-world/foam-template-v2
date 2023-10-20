@@ -29,7 +29,15 @@ const getWalletTxQueryKey: QueryKey = ['wallet-txs'];
 const fetchWallet = async () => await axios.get(`/wallet`);
 
 // transactions
-const fetchWalletTransactions = async ({ limit, page, filters }: { limit: number; page: number, filters: Record<string, any> }) => {
+const fetchWalletTransactions = async ({
+  limit,
+  page,
+  filters,
+}: {
+  limit: number;
+  page: number;
+  filters: Record<string, any>;
+}) => {
   return await axios.get(`/transaction`, {
     params: {
       page,
@@ -104,7 +112,15 @@ export const useGetWalletDetails = () => {
   return useQuery(getWalletQueryKey, options);
 };
 
-export const useGetWalletTxs = ({ limit, page, filters }: { limit: number; page: number, filters: Record<string, any> }) => {
+export const useGetWalletTxs = ({
+  limit,
+  page,
+  filters,
+}: {
+  limit: number;
+  page: number;
+  filters: Record<string, any>;
+}) => {
   const options: UseQueryOptions<ApiResponse<IWalletTx>, ApiError<null>> = {
     queryFn: async () => {
       return await fetchWalletTransactions({ limit, page, filters });

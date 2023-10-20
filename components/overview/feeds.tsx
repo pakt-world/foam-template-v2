@@ -54,18 +54,20 @@ export const Feeds = () => {
   };
 
   const fetchMore = () => {
+    setObserve(false);
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
 
   useEffect(() => {
+    console.log(observerTarget)
     if (!observerTarget.current) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) setObserve(true);
       },
-      { threshold: 1 },
+      { threshold: 0.5 },
     );
 
     if (observerTarget.current) {
@@ -78,6 +80,7 @@ export const Feeds = () => {
       }
     };
   }, [observerTarget.current]);
+  console.log("here===>", observerTarget, observe);
 
   useEffect(() => {
     if (!isLoading && !isFetchingNextPage && prevPage != currentPage) {

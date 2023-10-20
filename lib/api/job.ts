@@ -106,7 +106,7 @@ interface GetJobByIdParams {
   extras?: string;
 }
 
-interface GetJobByIdResponse extends Job { }
+interface GetJobByIdResponse extends Job {}
 
 async function getJobById(params: GetJobByIdParams): Promise<GetJobByIdResponse> {
   const res = await axios.get(`/collection/${params.jobId}`);
@@ -380,8 +380,8 @@ export function useCreateJobReview() {
         owners: [recipientId],
         type: FEED_TYPES.JOB_REVIEW,
         meta: {
-          rating: rating
-        }
+          rating: rating,
+        },
       });
       toast.success('Your review has been submitted successfully');
     },
