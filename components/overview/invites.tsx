@@ -21,6 +21,7 @@ export const Invites = () => {
     <div className="flex flex-col gap-5 border border-line bg-white rounded-2xl p-4 w-full">
       {invites.map(({ _id: inviteId, data }) => {
         const { creator, name, _id: jobId, paymentFee } = data;
+        console.log("feed--", inviteId)
         return (
           <JobFeedCard
             id={jobId}
@@ -29,12 +30,12 @@ export const Invites = () => {
             key={inviteId}
             type="job-invite-pending"
             inviteId={inviteId}
-            amount={paymentFee.toString()}
+            amount={String(paymentFee)}
             inviter={{
-              _id: creator._id,
-              score: creator.score,
-              avatar: creator.profileImage?.url,
-              name: `${creator.firstName} ${creator.lastName}`,
+              _id: creator?._id,
+              score: creator?.score,
+              avatar: creator?.profileImage?.url,
+              name: `${creator?.firstName} ${creator?.lastName}`,
             }}
             bookmarkId=""
             close={() => { }}

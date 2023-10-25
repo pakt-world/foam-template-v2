@@ -33,7 +33,16 @@ export const Slider = ({ items }: SliderProps) => {
 
   return (
     <div ref={wrapperRef} className="relative flex h-full flex-col overflow-hidden">
-      <motion.div className="flex h-full grow items-stretch " animate={{ translateX: -currentSlide * wrapperWidth }}>
+      <motion.div
+        className="flex h-full grow items-stretch "
+        animate={{ translateX: -currentSlide * wrapperWidth }}
+        transition={{
+          damping: 20,
+          duration: 0.3,
+          type: 'spring',
+          stiffness: 100,
+        }}
+      >
         {items.map(({ SlideItem }, index) => {
           return <SlideItem goToNextSlide={handleNext} goToPreviousSlide={handlePrevious} key={index} />;
         })}

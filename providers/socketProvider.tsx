@@ -275,11 +275,16 @@ export const MessagingProvider = ({ children }: { children: React.ReactNode }) =
           recipientId,
           type: "DIRECT"
         },
-        async (conversation: SocketResponse<any>) => {
-          await fetchUserChats(conversation.data._id);
+        async (response: SocketResponse<any>) => {
+          if (response.error) {
+            toast.error(response.message);
+            return router.push("/messages");
+          }
+          const { conversation } = response.data;
+          await fetchUserChats(conversation._id);
           setStartingNewChat(false)
           if (conversation.error) return router.back();
-          return router.push(`/messages/${conversation.data._id}`);
+          return router.push(`/messages/${conversation._id}`);
         }
       );
     } catch (error) {

@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:18-alpine AS deps
+FROM node:18-alpine3.17 AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache --virtual .build-deps alpine-sdk python3
@@ -11,15 +11,15 @@ RUN apk del .build-deps
 # RUN yarn install --production --silent
 
 # Rebuild the source code only when needed
-FROM node:18-alpine AS builder
+FROM node:18-alpine3.17 AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-RUN yarn set version v1.22.17
+RUN yarn set version v1.22.19
 RUN yarn build
 
 # Production image, copy all the files and run next
-FROM node:18-alpine AS runner
+FROM node:18-alpine3.17 AS runner
 WORKDIR /app
 ENV NODE_ENV production
 RUN addgroup -g 1001 -S nodejs
@@ -35,15 +35,14 @@ COPY entrypoint.sh .
 COPY .env .
 # Execute script
 RUN apk add --no-cache --upgrade bash
-RUN yarn set version v1.22.17
+RUN yarn set version v1.22.19
 RUN ["chmod", "+x", "./entrypoint.sh"]
 ENTRYPOINT ["./entrypoint.sh"]
 USER nextjs
 ENV NEXT_TELEMETRY_DISABLED 1
-# CMD ["node_modules/.bin/next", "start"]
 
 ARG PORT
 ENV PORT=${PORT:-9094}
 ENV NODE_ENV "production"
 EXPOSE $PORT
-CMD ["sh", "-c", "yarn start -p ${PORT}"]
+CMD ["sh", "-c", "yarn serve -p ${PORT}"]

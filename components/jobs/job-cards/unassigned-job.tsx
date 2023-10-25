@@ -33,7 +33,7 @@ export const UnAssignedJobCard: React.FC<UnAssignedJobCardProps> = ({ job }) => 
               ${paymentFee}
             </span>
           </div>
-          <div className="grow text-title text-2xl min-h-[58px] break-all">{title}</div>
+          <div className="grow text-title text-2xl min-h-[58px] break-words">{title}</div>
         </div>
       </div>
       <div className="flex items-center gap-2 justify-between mt-auto">

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Spinner, Slider, SlideItemProps } from '@/components/common';
 import type { LucideIcon } from 'lucide-react';
 import { useUpdateAccount } from '@/lib/api/account';
-import { PenTool, Terminal, Users, Feather, Library, Volume2, Edit3 } from 'lucide-react';
+import { PenTool, Terminal, Users, Feather, Library, Volume2, Edit3, AlertCircle } from 'lucide-react';
 import { toast } from '@/components/common/toaster';
 import { useDropzone } from 'react-dropzone';
 import { useUploadImage } from '@/lib/api/upload';
@@ -56,6 +56,9 @@ const Skills = ({ goToNextSlide }: SlideItemProps) => {
   );
 };
 
+const MB_IN_BYTES = 1024 * 1024;
+const maxSize = 2 * MB_IN_BYTES;
+
 const ProfileImage = () => {
   const router = useRouter();
   const { skill } = useOnboardingState();
@@ -73,7 +76,19 @@ const ProfileImage = () => {
     });
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop, maxFiles: 1, accept: { 'image/*': [] } });
+  const { getRootProps, getInputProps, fileRejections, isDragReject } = useDropzone({
+    onDrop,
+    maxSize,
+    minSize: 0,
+    maxFiles: 1,
+    accept: {
+      ['image/png']: [],
+      ['image/jpeg']: [],
+      ['image/jpg']: [],
+    },
+  });
+
+  const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > maxSize;
 
   React.useEffect(() => {
     return () => {
@@ -159,12 +174,26 @@ const ProfileImage = () => {
         )}
       </div>
 
+      {isFileTooLarge && (
+        <div className="text-sm text-red-500 flex items-center gap-1">
+          <AlertCircle size={16} />
+          <span>File size should be less than 2MB</span>
+        </div>
+      )}
+
+      {isDragReject && (
+        <div className="text-sm text-red-500 flex items-center gap-1">
+          <AlertCircle size={16} />
+          <span>File type not supported</span>
+        </div>
+      )}
+
       <div className="h-[80px] w-full flex items-center justify-center">
         {uploadImage.isLoading || updateAccount.isLoading ? (
           <UploadProgress progress={uploadProgress} />
         ) : (
           <div className="max-w-xs w-full">
-            <Button size="sm" fullWidth disabled={!imageFile} onClick={handleUpload}>
+            <Button size="sm" fullWidth disabled={!imageFile || isFileTooLarge} onClick={handleUpload}>
               Upload Image
             </Button>
           </div>

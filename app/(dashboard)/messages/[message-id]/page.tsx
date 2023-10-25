@@ -117,7 +117,7 @@ export default function Chat({ params }: Props) {
   return (
     <div className="flex flex-col h-full">
       <ChatBoxHeader
-        _id={currentConversation.header._id}
+        _id={currentConversation?.header._id ?? ''}
         title={currentConversation?.header?.title}
         description={currentConversation?.header?.description}
         time={currentConversation?.createdAt}

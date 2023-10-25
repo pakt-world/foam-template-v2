@@ -2,9 +2,8 @@ name: Production Web Deployment
 
 on:
   push:
-    branches:
-      - release/v1
-      - release/v1-app
+    tags:
+      - '**'
 
 env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
@@ -19,6 +18,17 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Set output
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -35,14 +45,16 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
-          docker build --build-arg PORT=9090 -f ./.deploy/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build --build-arg PORT=3000 -f ./.deploy/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
         
       - name: Push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF

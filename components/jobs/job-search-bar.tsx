@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import { useEffect } from 'react';
+import { NumericInput } from '@/components/common/numeric-input';
 
 interface JobSearchBarProps {
   search?: string;
@@ -81,14 +82,13 @@ export const JobSearchBar = ({ search, skills, range, isTalentView = false, hand
             {isTalentView ? 'AfroScore' : 'Price'}
           </label>
           <div className="flex gap-2 border py-2 border-line rounded-lg h-11 bg-gray-50">
-            <input
-              type="text"
+            <NumericInput
               placeholder="From"
               className="grow focus:outline-none bg-transparent px-3 placeholder:text-sm"
               {...form.register('min')}
             />
             <div className="border-r border-line" />
-            <input
+            <NumericInput
               type="text"
               placeholder="To"
               className="grow focus:outline-none bg-transparent px-3 placeholder:text-sm"

@@ -1,4 +1,5 @@
 import { ClassValue, clsx } from 'clsx';
+import { create } from 'domain';
 import { twMerge } from 'tailwind-merge';
 
 export function decodeBase64URL(value: string) {
@@ -99,6 +100,16 @@ type CreateQueryStringsParams = Array<{ name: string; value: string }>;
 export const createQueryStrings = (opts: CreateQueryStringsParams) => {
   const params = new URLSearchParams();
   opts.forEach((opt) => params.set(opt.name, opt.value));
+  return params.toString();
+};
+
+type CreateQueryStringsOpts = {
+  [key: string]: string;
+};
+
+export const createQueryStrings2 = (opts: CreateQueryStringsOpts) => {
+  const params = new URLSearchParams();
+  Object.keys(opts).forEach((key) => params.set(key, opts[key]));
   return params.toString();
 };
 

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "NODE_OPTIONS=\"--max-old-space-size=4096\" next start",
+    "serve": "next start",
     "lint": "next lint",
     "format": "prettier --config .prettierrc '**/*.ts' --write",
     "pre-commit": "npm run format && npm run lint && npm run build",

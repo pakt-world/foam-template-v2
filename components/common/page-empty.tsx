@@ -6,9 +6,10 @@ import empty from '@/lottiefiles/empty.json';
 interface Props {
   label?: string;
   className?: string;
+  children?: React.ReactNode;
 }
 
-export const PageEmpty: React.FC<Props> = ({ className, label }) => {
+export const PageEmpty: React.FC<Props> = ({ className, label, children }) => {
   return (
     <div
       aria-live="polite"
@@ -20,6 +21,7 @@ export const PageEmpty: React.FC<Props> = ({ className, label }) => {
           <Lottie animationData={empty} loop={false} />
         </div>
         <span className="text-body text-lg text-center max-w-md">{label || 'Nothing to show yet.'}</span>
+        {children}
       </div>
     </div>
   );

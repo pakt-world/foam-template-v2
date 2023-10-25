@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import { format } from 'date-fns';
 import type { Job, UserProfile } from '@/lib/types';
 import { useRouter } from 'next/navigation';
@@ -14,8 +13,7 @@ import { PageError } from '@/components/common/page-error';
 import { PageEmpty } from '@/components/common/page-empty';
 import { Pagination } from '@/components/common/pagination';
 import { PageLoading } from '@/components/common/page-loading';
-import { AfroProfile, AfroScore } from '@/components/common/afro-profile';
-import { DefaultAvatar } from '@/components/common/default-avatar';
+import { AfroProfile } from '@/components/common/afro-profile';
 interface Props {
   params: {
     'job-id': string;
@@ -36,6 +34,7 @@ const SORT_BY = [
 type SortBy = 'highest-to-lowest' | 'lowest-to-highest';
 
 export default function JobApplications({ params }: Props) {
+  const router = useRouter();
   const jobId = params['job-id'];
   const accountData = useGetAccount();
   const jobData = useGetJobById({ jobId });
@@ -161,10 +160,19 @@ export default function JobApplications({ params }: Props) {
         </div>
 
         {applicants.length === 0 && (
-          <PageEmpty
-            className="h-[60vh] rounded-2xl"
-            label="No applicants yet, try sharing your job with your network"
-          />
+          <PageEmpty className="h-[60vh] rounded-2xl" label="No applicants yet">
+            <div className="mt-4 w-full">
+              <Button
+                className="w-full"
+                fullWidth
+                onClick={() => {
+                  router.push(`/talents`);
+                }}
+              >
+                Find Talent
+              </Button>
+            </div>
+          </PageEmpty>
         )}
 
         {paginatedApplicants.length === 0 && applicants.length > 0 && (
@@ -183,6 +191,7 @@ export default function JobApplications({ params }: Props) {
                   talent={applicant.creator}
                   bid={applicant.paymentFee}
                   message={applicant.description}
+                  inviteReceiverId={job.invite?.receiver._id}
                 />
               ))}
             </div>
@@ -200,11 +209,14 @@ interface ApplicantCardProps {
   bid: number;
   message?: string;
   talent: UserProfile;
+  inviteReceiverId?: string;
 }
 
-const ApplicantCard: React.FC<ApplicantCardProps> = ({ bid, talent, message }) => {
+const ApplicantCard: React.FC<ApplicantCardProps> = ({ bid, talent, message, inviteReceiverId }) => {
   const router = useRouter();
   const { firstName, lastName, score, profileImage, profile } = talent;
+  const hasBeenInvited = inviteReceiverId === talent._id;
+
   return (
     <div className="w-full bg-white p-4 rounded-2xl border border-line flex flex-col gap-3">
       <div className="w-full flex gap-4">
@@ -222,7 +234,15 @@ const ApplicantCard: React.FC<ApplicantCardProps> = ({ bid, talent, message }) =
         <AfroProfile score={score} size="md" src={profileImage?.url} />
         <div className="flex flex-col gap-2 grow">
           <div className="flex items-center justify-between gap-2">
-            {<span className="text-title text-lg font-bold">{`${firstName} ${lastName}`}</span>}
+            <div className="flex items-center gap-2">
+              {<span className="text-title text-lg font-bold">{`${firstName} ${lastName}`}</span>}
+
+              {hasBeenInvited && (
+                <span className="px-3 text-green-900 inline-flex text-sm rounded-full bg-green-50 border border-green-400">
+                  Invited
+                </span>
+              )}
+            </div>
 
             <span className="px-3 text-base text-title inline-flex rounded-full bg-[#B2E9AA66]">Bid ${bid}</span>
           </div>

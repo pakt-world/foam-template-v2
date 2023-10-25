@@ -30,9 +30,7 @@ function AccountWrapper({ children, tokenSet }: DashProps) {
     return <Loader />;
   }
 
-  return (
-    <>{children}</>
-  )
+  return <>{children}</>;
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -57,7 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <AccountWrapper tokenSet={isTokenSet}>
       <MessagingProvider>
-        <div className="flex max-w-full h-screen w-screen">
+        <div className="flex max-w-full h-screen w-screen overflow-y-hidden">
           <Sidebar />
 
           <div className="relative w-full">

@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 import { Spinner } from '@/components/common';
 import { useUserState } from '@/lib/store/account';
-import { AUTH_TOKEN_KEY, TEMP_AUTH_TOKEN_KEY } from '@/lib/utils';
+import { AUTH_TOKEN_KEY } from '@/lib/utils';
 
 const loginFormSchema = z.object({
   password: z.string().min(1, 'Password is required').min(8, 'Password is too short'),

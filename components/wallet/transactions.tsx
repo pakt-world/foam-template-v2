@@ -4,7 +4,7 @@ import { ArrowUpRight, ArrowDownLeft, Circle } from 'lucide-react';
 import { Table } from '@/components/common/table';
 
 type TransactionType = 'withdrawal' | 'deposit';
-type TransactionStatus = 'processing' | 'pending' | 'completed' | 'failed';
+type TransactionStatus = 'processing' | 'pending' | 'completed' | 'failed' | 'reprocessing';
 interface WalletTransactions {
   date: string;
   amount: string;
@@ -48,55 +48,21 @@ const TABLE_COLUMNS: ColumnDef<WalletTransactions>[] = [
   },
 ];
 
-const TRANSACTION_DATA: WalletTransactions[] = [
-  {
-    date: '12/12/2021',
-    amount: '0.00000',
-    description: 'Deposit',
-    coin: 'USDC',
-    usdValue: '0.00',
-    type: 'deposit',
-    status: 'completed',
-  },
-  {
-    date: '12/12/2021',
-    amount: '0.000',
-    description: 'Withdrawal',
-    coin: 'USDC',
-    usdValue: '0.00',
-    type: 'withdrawal',
-    status: 'pending',
-  },
-  {
-    date: '12/12/2021',
-    amount: '0.00000',
-    description: 'Withdrawal',
-    coin: 'USDC',
-    usdValue: '0.00',
-    type: 'withdrawal',
-    status: 'processing',
-  },
-  {
-    date: '12/12/2021',
-    amount: '0.00000',
-    description: 'Deposit',
-    coin: 'USDC',
-    usdValue: '0.00',
-    type: 'deposit',
-    status: 'completed',
-  },
-  {
-    date: '12/12/2021',
-    amount: '0.000',
-    description: 'Withdrawal',
-    coin: 'USDC',
-    usdValue: '0.00',
-    type: 'withdrawal',
-    status: 'pending',
-  },
-];
-
-export const WalletTransactions = ({ data, page, limit, pageSize, loading, onPageChange }: { data: WalletTransactions[], page: number, limit: number, pageSize: number, loading: boolean, onPageChange: React.Dispatch<React.SetStateAction<PaginationState>> }) => {
+export const WalletTransactions = ({
+  data,
+  page,
+  limit,
+  pageSize,
+  loading,
+  onPageChange,
+}: {
+  data: WalletTransactions[];
+  page: number;
+  limit: number;
+  pageSize: number;
+  loading: boolean;
+  onPageChange: React.Dispatch<React.SetStateAction<PaginationState>>;
+}) => {
   return (
     <div className="border-line flex flex-col gap-4 rounded-lg border bg-white px-6 py-6 w-full max-w-full h-[450px]">
       <h3 className="text-base font-semibold">Wallet Transactions</h3>
@@ -105,7 +71,7 @@ export const WalletTransactions = ({ data, page, limit, pageSize, loading, onPag
         columns={TABLE_COLUMNS}
         pageCount={pageSize}
         setPagination={onPageChange}
-        pagination={{ pageIndex: page, pageSize, }}
+        pagination={{ pageIndex: page, pageSize }}
         loading={loading}
       />
     </div>
@@ -119,12 +85,14 @@ const TRANSACTION_STATUS_COLORS: TransactionStatusColors = {
   completed: { bgColor: 'bg-success', textColor: 'text-success' },
   pending: { bgColor: 'bg-yellow-dark', textColor: 'text-yellow' },
   processing: { bgColor: 'bg-yellow-dark', textColor: 'text-yellow' },
+  reprocessing: { bgColor: 'bg-yellow-dark', textColor: 'text-yellow' },
 };
 
 const TransactionStatus = ({ status }: { status: TransactionStatus }) => (
   <div
-    className={`${TRANSACTION_STATUS_COLORS[status].bgColor || 'bg-gray-300'
-      } flex w-fit items-center gap-2 rounded-full bg-opacity-10 px-3 py-0.5 capitalize`}
+    className={`${
+      TRANSACTION_STATUS_COLORS[status].bgColor || 'bg-gray-300'
+    } flex w-fit items-center gap-2 rounded-full bg-opacity-10 px-3 py-0.5 capitalize`}
   >
     <span className={`text-sm ${TRANSACTION_STATUS_COLORS[status].textColor || 'text-title'}`}>{status}</span>
   </div>

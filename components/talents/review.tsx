@@ -8,7 +8,6 @@ import { AfroProfile } from '../common/afro-profile';
 import { BlazeCarousel, useBlazeSlider } from '../common/blazeCarousel';
 import { useUserState } from '@/lib/store/account';
 
-
 interface ReviewProps {
   body: string;
   title: string;
@@ -25,12 +24,17 @@ interface ReviewProps {
 const Review: React.FC<ReviewProps> = ({ body, title, rating, user }) => {
   const { _id: loggedInUser } = useUserState();
   const MAX_LEN = 150;
-  const navigateUrl = loggedInUser == user._id ? "/profile" : `/talents/${user?._id}`;
+  const navigateUrl = loggedInUser == user._id ? '/profile' : `/talents/${user?._id}`;
   return (
-    <div className="bg-white min-h-full rounded-2xl p-4 flex flex-col gap-4 select-none cursor-grab w-full" style={{ maxWidth: "50%" }}>
-      <div className='flex flex-col flex-1 max-w-full gap-4'>
-        <h3 className="text-xl font-medium text-title max-w-fit break-all">{title}</h3>
-        <p className="text-base font-thin text-body max-w-fit break-all">{body.length > MAX_LEN ? `${body.slice(0, 150)}...` : body}</p>
+    <div
+      className="bg-white min-h-full rounded-2xl p-4 flex flex-col gap-4 select-none cursor-grab w-full"
+      style={{ maxWidth: '50%' }}
+    >
+      <div className="flex flex-col flex-1 max-w-[100%] gap-4 break-all" style={{ wordWrap: "break-word", overflowWrap: "break-word", wordBreak: "break-word" }}>
+        <h3 className="text-xl font-medium text-title">{title}</h3>
+        <p className="text-base font-thin text-body max-w-fit">
+          {body.length > MAX_LEN ? `${body.slice(0, 150)}...` : body}
+        </p>
       </div>
 
       <div className="flex items-center justify-between">
@@ -84,7 +88,7 @@ export const Reviews = ({ reviews, loading }: { reviews: ReviewProps[]; loading:
           <Spinner />
         </div>
       ) : (
-        <div className='basis-0 relative h-full'>
+        <div className="basis-0 relative h-full">
           {/* @ts-ignore */}
           <BlazeCarousel elRef={sliderInstance?.ref}>
             {reviews &&
@@ -97,7 +101,7 @@ export const Reviews = ({ reviews, loading }: { reviews: ReviewProps[]; loading:
           {!reviews ||
             (reviews.length === 0 && (
               <div className="flex w-full text-white min-h-[207px] m-auto items-center">
-                <p className='mx-auto'>No Reviews</p>
+                <p className="mx-auto">No Reviews</p>
               </div>
             ))}
         </div>

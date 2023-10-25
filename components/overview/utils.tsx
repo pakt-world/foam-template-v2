@@ -54,7 +54,8 @@ export const ParseFeedView = (
     name: `${feed?.data?.owner?.firstName || ''} ${feed?.data?.owner?.lastName || ''}`,
     score: feed?.data?.owner?.score || 0,
   };
-  const deliverableTotal = feed?.data?.collections.filter((f) => f.type == 'deliverable').length;
+  console.log(feed?.data)
+  const deliverableTotal = (feed?.data?.collections || []).filter((f) => f.type == 'deliverable').length;
   const currentProgress = feed?.meta?.value;
   const deliverableCountPercentage = {
     total: deliverableTotal,

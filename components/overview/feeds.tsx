@@ -80,7 +80,6 @@ export const Feeds = () => {
       }
     };
   }, [observerTarget.current]);
-  console.log("here===>", observerTarget, observe);
 
   useEffect(() => {
     if (!isLoading && !isFetchingNextPage && prevPage != currentPage) {
