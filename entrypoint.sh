@@ -21,7 +21,7 @@ function apply_path {
     # if config found
     if [ -n "$configValue" ] && [ -n "$envValue" ]; then
       # replace all
-      echo "Replace: ${configValue} with: ${envValue}"
+      echo "Replace: ${configValue} with: ${envValue} for: ${configName}"
       find $nextFolder \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#$configValue#$envValue#g"
     fi
   done < $envFilename

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - release/v1
-      - release/v1-app
 
 env:
   ECR_REPOSITORY: ${{ secrets.ECR_REPO }}
@@ -36,7 +35,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
-          docker build --build-arg PORT=9090 -f ./.deploy/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF .
+          docker build --build-arg PORT=9090 -f ./.deploy/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF $ECR_REGISTRY/$ECR_REPOSITORY:latest
         
       - name: Push image to Amazon ECR
@@ -45,4 +44,3 @@ jobs:
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF
