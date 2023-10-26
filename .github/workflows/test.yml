@@ -1,4 +1,4 @@
-name: Production Web Deployment
+name: Image Test Web Deployment
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: Build and Push Image to ECR
+    name: Test Image Build
     runs-on: ubuntu-latest
 
     steps:
@@ -30,17 +30,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build Image
+      - name: Build Image To Test
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
           docker build --build-arg PORT=9090 -f ./.deploy/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF $ECR_REGISTRY/$ECR_REPOSITORY:latest
         
-      - name: Push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-        run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
