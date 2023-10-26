@@ -3,7 +3,7 @@ import * as z from 'zod';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLogin } from '@/lib/api';
-import { Input, Button } from 'pakt-ui';
+import { Input, Button, PasswordInput } from 'pakt-ui';
 import { setCookie } from 'cookies-next';
 import { createQueryStrings } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,8 +50,7 @@ export default function Login() {
               { name: 'type', value: data.twoFa.type },
             ])}`,
           );
-        }
-        else {
+        } else {
           // @ts-ignore
           setUser(data);
           setCookie(AUTH_TOKEN_KEY, data.token);
@@ -91,7 +90,7 @@ export default function Login() {
               <label htmlFor="email" className="text-white text-sm">
                 Password
               </label>
-              <Input {...form.register('password')} className="" placeholder="Password" type="password" />
+              <PasswordInput {...form.register('password')} className="" placeholder="Password" />
             </div>
 
             <div className="items-center justify-end flex">

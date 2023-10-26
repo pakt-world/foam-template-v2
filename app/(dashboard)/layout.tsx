@@ -1,14 +1,19 @@
 'use client';
 import React, { useState } from 'react';
 import { Sidebar } from '@/components/sidebar';
-
+import { Modal } from '@/components/common/headless-modal';
 import { axios } from '@/lib/axios';
 import { RaceBy } from '@uiball/loaders';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { AUTH_TOKEN_KEY } from '@/lib/utils';
+import { deleteCookie } from 'cookies-next';
 import { useGetAccount } from '@/lib/api/account';
 import { MessagingProvider } from '@/providers/socketProvider';
+import { useIdleTimer } from 'react-idle-timer';
+import { Button } from 'pakt-ui';
+import { formatDistance } from 'date-fns';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Loader = () => {
   return (
@@ -33,10 +38,53 @@ function AccountWrapper({ children, tokenSet }: DashProps) {
   return <>{children}</>;
 }
 
+const SIX_MINUTES_IN_MS = 6 * 60 * 1000;
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const token = getCookie(AUTH_TOKEN_KEY);
   const [isTokenSet, setIsTokenSet] = useState(false);
+
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [isTimeoutModalOpen, setIsTimeoutModalOpen] = useState(false);
+
+  const onIdle = () => {
+    setIsTimeoutModalOpen(false);
+    queryClient.clear();
+    router.push('/login');
+    deleteCookie(AUTH_TOKEN_KEY);
+  };
+
+  const onActive = () => {
+    setIsTimeoutModalOpen(false);
+  };
+
+  const onPrompt = () => {
+    setIsTimeoutModalOpen(true);
+  };
+
+  const stayActive = () => {
+    activate();
+  };
+
+  const { getRemainingTime, activate } = useIdleTimer({
+    onIdle,
+    onActive,
+    onPrompt,
+    timeout: SIX_MINUTES_IN_MS,
+    promptBeforeIdle: SIX_MINUTES_IN_MS / 2,
+  });
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setRemainingTime(getRemainingTime());
+    }, 10);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [getRemainingTime]);
 
   React.useEffect(() => {
     if (token) {
@@ -88,6 +136,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </div>
             <div className="absolute bg-repeat opacity-50 inset-0 bg-[url(/images/rain.png)]" />
+            <Modal isOpen={isTimeoutModalOpen} closeModal={() => {}} disableClickOutside>
+              <div className="w-full flex flex-col gap-4 items-center text-center bg-white py-4 p-4 rounded-xl">
+                <h2 className="font-bold text-2xl">Session Expiring</h2>
+                <p>
+                  Logging out{' '}
+                  <span className="">
+                    {formatDistance(remainingTime, 0, { includeSeconds: true, addSuffix: true })}
+                  </span>
+                </p>
+
+                <div className="flex gap-1 items-center w-full">
+                  <Button size="sm" fullWidth variant="secondary" className="scale-90">
+                    Log Out
+                  </Button>
+                  <Button size="sm" fullWidth className="scale-95" onClick={stayActive}>
+                    Stay Active
+                  </Button>
+                </div>
+              </div>
+            </Modal>
             <div className="relative h-full pt-5 px-8 z-10 flex flex-col w-full isolate">{children}</div>
           </div>
         </div>

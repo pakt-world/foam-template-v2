@@ -164,15 +164,7 @@ export const ProfileView = () => {
             <Switch />
           </div> */}
       </div>
-      <form
-        className="flex flex-col w-4/5 overflow-y-auto min-h-full"
-        onSubmit={form.handleSubmit(onSubmit)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-          }
-        }}
-      >
+      <form className="flex flex-col w-4/5 overflow-y-auto min-h-full" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="bg-white rounded-lg p-4 mb-4">
           <div className="flex flex-row justify-between h-[50px] items-center mb-4">
             <p className="text-lg text-title font-bold">Edit Profile Details</p>
@@ -302,7 +294,7 @@ export const ProfileView = () => {
             <div className="flex flex-row gap-4">
               <div className="relative w-1/2">
                 <p className="text-sm">Skill Sets</p>
-                <div className="min-h-[186px] border !bg-[#FCFCFD] !border-[#E8E8E8] rounded-lg">
+                <div className="min-h-[186px] border !bg-[#FCFCFD] border-primary border-opacity-40 rounded-lg">
                   <Controller
                     name="tags"
                     control={form.control}
@@ -310,7 +302,7 @@ export const ProfileView = () => {
                       <TagInput
                         tags={value}
                         setTags={onChange}
-                        className="items-start border border-none"
+                        className="items-start grow border-none bg-transparent"
                         placeholder="Add your top 3 skills first"
                       />
                     )}
@@ -325,10 +317,13 @@ export const ProfileView = () => {
               <div className="relative w-1/2">
                 <p className="text-sm">Bio</p>
                 <Textarea
-                  className="!min-h-[186px] w-full"
+                  maxLength={350}
+                  className="!min-h-[186px] w-full !bg-[#FCFCFD]"
                   {...form.register('bio')}
                   placeholder="Enter a 350 character about thing"
                 />
+                <div className="text-body w-fit text-sm ml-auto">{form.watch('bio')?.length ?? 0} / 350</div>
+
                 <span className="absolute -bottom-6 flex w-full">
                   {form.formState.errors.bio?.message && (
                     <span className="text-sm text-red-500">{form.formState.errors.bio?.message}</span>

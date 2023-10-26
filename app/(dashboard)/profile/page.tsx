@@ -14,7 +14,7 @@ export default function Profile() {
   const router = useRouter();
   const user = useUserState();
   const talentId = String(user?._id);
-  const { data: talentReviews, isLoading, refetch: FetchTalent } = useGetTalentReviewById(talentId, "1", "10", true);
+  const { data: talentReviews, isLoading, refetch: FetchTalent } = useGetTalentReviewById(talentId, '1', '10', true);
 
   useEffect(() => {
     if (talentId) {
@@ -40,10 +40,10 @@ export default function Profile() {
     }),
     [user],
   );
-  if (isLoading) return <PageLoading />
+  if (isLoading) return <PageLoading />;
   const reviews = talentReviews?.data || [];
   return (
-    <div className="flex flex-col gap-6 pt-6 overflow-y-auto w-full">
+    <div className="grid gap-6 grid-cols-1 pb-4 h-fit items-start overflow-y-auto">
       <ProfileHeader
         _id={talent.id}
         name={talent.name}
@@ -65,7 +65,7 @@ export default function Profile() {
           }))}
         />
       </div>
-      <div className='w-full'>
+      <div className="w-full">
         <Reviews
           reviews={
             reviews?.map((a) => ({
@@ -76,11 +76,13 @@ export default function Profile() {
                 _id: a.owner._id,
                 afroScore: a.owner.score,
                 name: `${a.owner.firstName}${a.owner.lastName}`,
-                title: a.owner.profile.bio?.title || "",
-                avatar: a.owner.profileImage?.url ?? "",
-              }
+                title: a.owner.profile.bio?.title || '',
+                avatar: a.owner.profileImage?.url ?? '',
+              },
             })) ?? []
-          } loading={isLoading} />
+          }
+          loading={isLoading}
+        />
       </div>
     </div>
   );

@@ -14,9 +14,15 @@ export default function TalentDetails() {
   const params = useParams();
   const talentId = String(params['talent-id']);
   const talentData = useGetTalentById(talentId, true);
-  const reviewData = useGetTalentReviewById(talentId, "1", "10", true);
+  const reviewData = useGetTalentReviewById(talentId, '1', '10', true);
 
-  if (talentData.isLoading || reviewData.isLoading || (!talentData.isFetched && talentData.isFetching) || (!reviewData.isFetched && reviewData.isFetching)) return <PageLoading />;
+  if (
+    talentData.isLoading ||
+    reviewData.isLoading ||
+    (!talentData.isFetched && talentData.isFetching) ||
+    (!reviewData.isFetched && reviewData.isFetching)
+  )
+    return <PageLoading />;
 
   if (talentData.isError || reviewData.isError) return <PageError />;
 
@@ -24,7 +30,7 @@ export default function TalentDetails() {
   const reviews = reviewData.data;
 
   return (
-    <div className="flex flex-col gap-6 pt-6 overflow-y-auto w-full">
+    <div className="grid gap-6 grid-cols-1 pb-4 h-fit items-start overflow-y-auto">
       <ProfileHeader
         _id={talent._id}
         name={`${talent.firstName} ${talent.lastName}`}
@@ -45,7 +51,8 @@ export default function TalentDetails() {
           }))}
         />
       </div>
-      <div className='w-full'>
+
+      <div className="w-full">
         <Reviews
           reviews={
             reviews?.data.map((a) => ({
@@ -56,9 +63,9 @@ export default function TalentDetails() {
                 _id: a.owner._id,
                 afroScore: a.owner.score,
                 name: `${a.owner.firstName}${a.owner.lastName}`,
-                title: a.owner.profile.bio?.title || "",
-                avatar: a.owner.profileImage?.url ?? "",
-              }
+                title: a.owner.profile.bio?.title || '',
+                avatar: a.owner.profileImage?.url ?? '',
+              },
             })) ?? []
           }
           loading={false}

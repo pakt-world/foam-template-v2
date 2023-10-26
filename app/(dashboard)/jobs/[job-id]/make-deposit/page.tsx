@@ -11,7 +11,6 @@ import QRCode from 'react-qr-code';
 import { useSearchParams } from 'next/navigation';
 import { erc20ABI } from '@wagmi/core';
 import { Copy, Loader2, X, ChevronLeft } from 'lucide-react';
-import { Modal } from '@/components/common';
 import * as Tabs from '@radix-ui/react-tabs';
 import { Spinner } from '@/components/common';
 import { useCopyToClipboard } from 'usehooks-ts';
@@ -23,7 +22,7 @@ import { useRouter } from 'next/navigation';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { AlertCircle } from 'lucide-react';
-
+import { Modal } from '@/components/common/headless-modal';
 import { WagmiConfig, configureChains, createConfig } from 'wagmi';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
@@ -247,7 +246,13 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         <p className="text-body">Connect your wallet of choice or pay with a deposit address.</p>
       </div>
 
-      <Modal isOpen={isOpen} onOpenChange={setIsOpen} disableClickOutside>
+      <Modal
+        isOpen={isOpen}
+        closeModal={() => {
+          setIsOpen(false);
+        }}
+        disableClickOutside
+      >
         <MakePaymentModal
           depositAddress={depositAddress}
           job={job}

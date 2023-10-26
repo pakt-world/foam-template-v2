@@ -123,9 +123,9 @@ export const Achievements: React.FC<AchievementProps> = ({ achievements = [] }) 
   achievements.sort((a, b) => b.total - a.total);
   return (
     <div className="bg-primary-gradient p-[4px] rounded-2xl shrink-0">
-      <div className="bg-[#F8FFF4] py-4 px-6 rounded-xl gap-4 flex flex-col w-fit shrink-0">
+      <div className="bg-[#F8FFF4] h-full py-4 px-6 rounded-xl gap-4 flex flex-col w-fit shrink-0 items-center">
         <h3 className="text-center text-title text-lg font-medium">Achievements</h3>
-        <div className="grid grid-cols-4 gap-4 w-full">
+        <div className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           {achievements.length > 0 &&
             achievements.map(({ total, type, value }) => {
               return (

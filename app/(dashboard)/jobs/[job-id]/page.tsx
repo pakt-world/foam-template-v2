@@ -14,7 +14,7 @@ import { useSearchParams } from 'next/navigation';
 import { useGetAccount } from '@/lib/api/account';
 import Lottie from 'lottie-react';
 import success from '@/lottiefiles/success.json';
-import { Modal } from '@/components/common/modal';
+import { Modal } from '@/components/common/headless-modal';
 import { PageError } from '@/components/common/page-error';
 import { PageLoading } from '@/components/common/page-loading';
 import { JobHeader, JobDescription, JobSkills, JobDeliverables } from '@/components/jobs/job-details';
@@ -127,7 +127,12 @@ const ClientJobDetails: React.FC<ClientJobDetailsProps> = ({ job }) => {
       </div>
 
       <div className="basis-[270px]  h-full gap-7 w-fit flex flex-col items-center"></div>
-      <Modal isOpen={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+      <Modal
+        isOpen={isDeleteModalOpen}
+        closeModal={() => {
+          setIsDeleteModalOpen(false);
+        }}
+      >
         <DeleteJobModal jobId={job._id} title={job.name} setModalOpen={setIsDeleteModalOpen} />
       </Modal>
     </div>
@@ -435,7 +440,12 @@ const TalentOpenJobCtas: React.FC<TalentOpenJobCtasProps> = ({
           </Button>
         )}
 
-        <Modal isOpen={isApplyModalOpen} onOpenChange={setIsApplyModalOpen}>
+        <Modal
+          isOpen={isApplyModalOpen}
+          closeModal={() => {
+            setIsApplyModalOpen(false);
+          }}
+        >
           <TalentJobApplyModal jobId={jobId} jobCreator={jobCreator} />
         </Modal>
       </div>

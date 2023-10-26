@@ -26,20 +26,18 @@ export const ProfileHeader: React.FC<Props> = ({ _id, name, position, score, ski
     <React.Fragment>
       <InviteTalentModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} talentId={_id} />
 
-      <div className="w-full flex relative bg-white py-6 rounded-2xl gap-6 border border-line">
-        <div className="absolute left-[0%] top-[0%] shrink-0 mr-2">
+      <div className="w-full flex bg-white rounded-2xl gap-6 border border-line pr-4 relative">
+        <div className="absolute w-full top-1/2 h-[2px]" style={{ backgroundColor: borderColor }}></div>
+
+        <div>
           <AfroProfile src={profileImage} score={score} size="xl" />
         </div>
-        <div className="flex flex-col gap-0 grow">
-          <div
-            className={`flex flex-row gap-2 px-6 w-full justify-between border-b-2 pb-4`}
-            style={{ borderColor: borderColor }}
-          >
-            <div className="w-[18%]"></div>
-            <div className="flex flex-row justify-between w-[85%]">
+        <div className="grid grid-cols-1 grow">
+          <div className={`flex flex-row gap-2 w-full justify-between`}>
+            <div className="flex flex-row justify-between w-full flex-wrap gap-2 items-center">
               <div className="flex flex-col gap-1">
-                <h1 className="text-3xl font-bold text-title">{name}</h1>
-                <div className="flex gap-2 items-center text-body">
+                <h1 className="text-3xl font-bold text-title truncate">{name}</h1>
+                <div className="flex gap-2 items-center text-body capitalize">
                   <Briefcase size={16} />
                   <span>{position}</span>
                 </div>
@@ -70,19 +68,19 @@ export const ProfileHeader: React.FC<Props> = ({ _id, name, position, score, ski
               )}
             </div>
           </div>
-          <div className="flex flex-row px-6 py-2 pt-4 min-h-[80px]">
-            <div className="w-[18%]"></div>
-            <div className="flex w-[85%] flex-wrap gap-2 h-fit">
-              {skills.map((skill, i) => (
-                <span
-                  key={i}
-                  className="bg-white rounded-full px-6 py-1.5 text-sm font-medium text-[#090A0A] capitalize"
-                  style={{ backgroundColor: skill.backgroundColor }}
-                >
-                  {skill.name}
-                </span>
-              ))}
-            </div>
+
+          <div className="flex flex-wrap gap-2 h-fit pt-4">
+            {skills.map((skill, i) => (
+              <span
+                key={i}
+                className="bg-white rounded-full px-6 py-1.5 text-sm font-medium text-[#090A0A] capitalize"
+                style={{
+                  backgroundColor: skill.backgroundColor,
+                }}
+              >
+                {skill.name}
+              </span>
+            ))}
           </div>
         </div>
       </div>
