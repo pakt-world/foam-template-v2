@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: process.env.STORAGE_URL || 'chainsite-storage.s3.us-east-1.amazonaws.com',
+        hostname: process.env.STORAGE_URL,
         port: '',
       },
     ],
