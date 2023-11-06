@@ -149,17 +149,17 @@ interface PaymentCoinsProps {
 }
 
 const fetchPaymentCoins = async (): Promise<PaymentCoinsProps[]> => {
-  const res = await axios.get(`/payment/coins`)
+  const res = await axios.get(`/payment/coins`);
   return res.data.data;
 };
 
 export const useGetPaymentCoins = () => {
-  const getQueryIdKey = ["payment-coin"];
+  const getQueryIdKey = ['payment-coin'];
   return useQuery({
     queryFn: fetchPaymentCoins,
     queryKey: getQueryIdKey,
     onError: (error: any) => {
       toast.error(error.response?.data.message || 'An error fetching talents occurred');
-    }
+    },
   });
 };

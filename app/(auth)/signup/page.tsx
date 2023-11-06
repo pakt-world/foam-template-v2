@@ -1,22 +1,42 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
-import * as z from 'zod';
-import { useSignUp } from '@/lib/api';
-import { createQueryStrings, spChars } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { useParams, useRouter } from 'next/navigation';
-import { InputErrorMessage, Spinner } from '@/components/common';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Input, Button } from 'pakt-ui';
-import { Container } from '@/components/common/container';
-import { useValidateReferral } from '@/lib/api/referral';
+import React, {
+  useMemo,
+  useState,
+} from 'react';
+
 import Lottie from 'lottie-react';
-import warning from '@/lottiefiles/warning-2.json';
+import Image from 'next/image';
+import Link from 'next/link';
+import {
+  useParams,
+  useRouter,
+} from 'next/navigation';
+import {
+  Button,
+  Input,
+} from 'pakt-ui';
+import {
+  SubmitHandler,
+  useForm,
+} from 'react-hook-form';
+import * as z from 'zod';
+
+import {
+  InputErrorMessage,
+  Spinner,
+} from '@/components/common';
+import { Container } from '@/components/common/container';
 import { PasswordCriteria } from '@/components/settings/security';
+import { useSignUp } from '@/lib/api';
+import { useValidateReferral } from '@/lib/api/referral';
 import { useGetSetting } from '@/lib/api/setting';
 import { SETTING_CONSTANTS } from '@/lib/constants';
+import {
+  createQueryStrings,
+  spChars,
+} from '@/lib/utils';
+import warning from '@/lottiefiles/warning-2.json';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const passwordSchema = z
   .string()
@@ -48,7 +68,6 @@ export default function Signup() {
   const params = useParams();
   const [isLoading, _setIsLoading] = useState(false);
   const [errorMsg, _setErrorMsg] = useState(true);
-  const referralCode = String(params.code);
   const { data: systemSetting, isLoading: settingsLoading } = useGetSetting();
   const loading = settingsLoading || isLoading;
 
@@ -65,7 +84,7 @@ export default function Signup() {
 
   const onSubmit: SubmitHandler<FormValues> = (values) => {
     signup.mutate(
-      { ...values, referral: referralCode },
+      { ...values },
       {
         onSuccess: ({ tempToken, email }) => {
           router.push(

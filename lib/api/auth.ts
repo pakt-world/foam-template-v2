@@ -1,6 +1,7 @@
-import { axios, ApiError } from '@/lib/axios';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/common/toaster';
+import { ApiError, axios } from '@/lib/axios';
+import { useMutation } from '@tanstack/react-query';
+
 import { useUserState } from '../store/account';
 import { useWalletState } from '../store/wallet';
 
@@ -19,7 +20,7 @@ interface SignupParams {
   password: string;
   lastName: string;
   firstName: string;
-  referral: string;
+  referral?: string;
 }
 
 async function postSignUp({ email, password, firstName, lastName, referral }: SignupParams): Promise<SignupResponse> {

@@ -2,20 +2,15 @@ import { NextResponse } from 'next/server';
 import { AUTH_TOKEN_KEY, decodeJWTPayload } from '@/lib/utils';
 import type { NextRequest } from 'next/server';
 
-const DASHBOARD_URL = "/overview";
-const AUTH_URL = "/login";
+const DASHBOARD_URL = '/overview';
+const AUTH_URL = '/login';
 
-const authRoutes = [
-  "/login",
-  "/signup",
-  "/forgot-password"
-]
+const authRoutes = ['/login', '/signup', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
-
   const token = request.cookies.get(AUTH_TOKEN_KEY);
   if (!token) {
-    if (!authRoutes.includes(request.nextUrl.pathname) && request.nextUrl.pathname != "") {
+    if (!authRoutes.includes(request.nextUrl.pathname) && request.nextUrl.pathname != '') {
       return redirectToLogin(request);
     }
   } else {
