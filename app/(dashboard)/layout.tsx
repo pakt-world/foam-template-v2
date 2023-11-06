@@ -68,6 +68,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     activate();
   };
 
+  const Logout = () => {
+    deleteCookie(AUTH_TOKEN_KEY);
+    queryClient.clear();
+    router.push('/login');
+  }
+
   const { getRemainingTime, activate } = useIdleTimer({
     onIdle,
     onActive,
@@ -136,7 +142,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </div>
             <div className="absolute bg-repeat opacity-50 inset-0 bg-[url(/images/rain.png)]" />
-            <Modal isOpen={isTimeoutModalOpen} closeModal={() => {}} disableClickOutside>
+            <Modal isOpen={isTimeoutModalOpen} closeModal={() => { }} disableClickOutside>
               <div className="w-full flex flex-col gap-4 items-center text-center bg-white py-4 p-4 rounded-xl">
                 <h2 className="font-bold text-2xl">Session Expiring</h2>
                 <p>
@@ -147,7 +153,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </p>
 
                 <div className="flex gap-1 items-center w-full">
-                  <Button size="sm" fullWidth variant="secondary" className="scale-90">
+                  <Button size="sm" fullWidth variant="secondary" className="scale-90" onClick={Logout}>
                     Log Out
                   </Button>
                   <Button size="sm" fullWidth className="scale-95" onClick={stayActive}>

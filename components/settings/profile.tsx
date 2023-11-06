@@ -106,8 +106,6 @@ export const ProfileView = () => {
 
   if (accountIsLoading) return <Spinner />;
 
-  // TODO:: parse Error for input validations
-  console.log(form.formState.errors);
   return (
     <div className="flex flex-row relative gap-6 h-full grow overflow-y-auto">
       <div className="flex flex-col w-1/4 h-fit bg-white rounded-lg items-center">

@@ -2,12 +2,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { getCookie } from "cookies-next";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUserState } from "@/lib/store/account";
 import { AUTH_TOKEN_KEY, formatBytes } from "@/lib/utils";
-import { axios } from "@/lib/axios";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import dayjs from "dayjs";
 import { toast } from "@/components/common/toaster";
 import { useRouter } from "next/navigation";

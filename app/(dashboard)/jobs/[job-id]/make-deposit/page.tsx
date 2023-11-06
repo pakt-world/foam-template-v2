@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { PostJobPaymentDetailsResponse, useConfirmJobPayment, useGetJobById } from '@/lib/api/job';
 import { RaceBy } from '@uiball/loaders';
 import { useInviteTalentToJob } from '@/lib/api/job';
-import { parseEther } from 'viem';
+import { parseEther, parseUnits } from 'viem';
 import QRCode from 'react-qr-code';
 import { useSearchParams } from 'next/navigation';
 import { erc20ABI } from '@wagmi/core';
@@ -40,6 +40,7 @@ import {
 } from 'wagmi';
 import { set } from 'date-fns';
 import { Job } from '@/lib/types';
+import { useGetPaymentCoins } from '@/lib/api/wallet';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains([avalancheFuji, avalanche], [publicProvider()]);
 
@@ -80,6 +81,10 @@ const WALLET_LOGO: Record<string, string> = {
 };
 
 type SUPPORTED_COINS = 'USDC' | 'AVAX';
+const SUPPORTED_COINS = {
+  USDC: 'USDC',
+  AVAX: 'AVAX',
+}
 
 interface Props {
   params: {
@@ -93,11 +98,15 @@ export default function MakeDepositPage({ params }: Props) {
   const { data: job, isLoading, isFetched, isError } = useGetJobById({ jobId });
   const mutation = usePostJobPaymentDetails();
   const [paymentCoin, setPaymentCoin] = React.useState<SUPPORTED_COINS>();
+  const [contractAddress, setContractAddress] = React.useState<string>();
+  const { data: paymentCoinsData, isLoading: paymentCoinsLoading } = useGetPaymentCoins();
 
   const selectPaymentCoin = async (coin: SUPPORTED_COINS) => {
     setPaymentCoin(coin);
     mutation.mutate({ jobId, coin });
   };
+
+  console.log("coins==>", paymentCoinsData);
 
   return (
     <WagmiConfig config={wagmiConfig}>
@@ -122,21 +131,22 @@ export default function MakeDepositPage({ params }: Props) {
             <div className="flex flex-col gap-2">
               <h2 className="text-lg font-bold">Choose Payment Method</h2>
               <div className="flex gap-2 items-center">
-                <button
+                {(paymentCoinsData || [])?.map((coin, i) => <button key={i}
                   className={cn(
                     'p-4 rounded-xl bg-white border-line flex items-center gap-2 border-[1.5px] hover:bg-green-50 duration-200',
                     {
-                      'border-secondary bg-green-50': paymentCoin === 'USDC',
+                      'border-secondary bg-green-50': paymentCoin === coin.symbol,
                     },
                   )}
                   onClick={() => {
-                    selectPaymentCoin('USDC');
+                    selectPaymentCoin(coin.symbol as SUPPORTED_COINS);
+                    setContractAddress(coin.contractAddress);
                   }}
                 >
-                  <Image src="/icons/usdc-logo.svg" alt="Coinbase" width={30} height={30} />
-                  <span className="font-bold text-lg">USDC</span>
-                </button>
-                <button
+                  <Image src={coin.symbol == SUPPORTED_COINS.USDC ? "/icons/usdc-logo.svg" : "/icons/avax-logo.svg"} alt="Coinbase" width={30} height={30} />
+                  <span className="font-bold text-lg">{coin.symbol.toUpperCase()}</span>
+                </button>)}
+                {/* <button
                   className={cn(
                     'p-4 rounded-xl bg-white border-line flex items-center gap-2 border-[1.5px] hover:bg-green-50 duration-200',
                     {
@@ -147,7 +157,7 @@ export default function MakeDepositPage({ params }: Props) {
                 >
                   <Image src="/icons/avax-logo.svg" alt="Coinbase" width={30} height={30} />
                   <span className="font-bold text-lg">AVAX</span>
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -159,6 +169,7 @@ export default function MakeDepositPage({ params }: Props) {
                 isLoading={mutation.isLoading || (!isFetched && isLoading)}
                 isError={mutation.isError || isError}
                 errMsg={mutation.error?.message}
+                contractAddress={contractAddress}
                 job={job}
               />
             )}
@@ -177,6 +188,7 @@ interface PaymentDetailsProps {
   isLoading: boolean;
   isError: boolean;
   errMsg?: string;
+  contractAddress?: string;
 }
 
 const PaymentDetails: React.FC<PaymentDetailsProps> = ({
@@ -187,6 +199,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   errMsg,
   paymentDetails,
   job,
+  contractAddress,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   if (isLoading)
@@ -205,7 +218,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </div>
       </div>
     );
-
+  console.log(paymentDetails)
   const depositAddress = paymentDetails.address;
 
   return (
@@ -260,6 +273,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
           closeModal={() => setIsOpen(false)}
           coin={coin}
           coinAmount={paymentDetails?.amountToPay}
+          contractAddress={contractAddress}
         />
       </Modal>
 
@@ -282,9 +296,10 @@ interface MakePaymentModalProps {
   depositAddress: string;
   closeModal: () => void;
   coin: SUPPORTED_COINS;
+  contractAddress?: string;
 }
 
-const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, coin }: MakePaymentModalProps) => {
+const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, coin, contractAddress }: MakePaymentModalProps) => {
   return (
     <div className="flex w-full flex-col gap-6 bg-white p-6 border rounded-2xl max-w-[400px] mx-auto">
       <div className="flex w-full items-center justify-between">
@@ -322,6 +337,7 @@ const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, 
               amount={coinAmount}
               depositAddress={depositAddress}
               coin={coin}
+              contractAddress={contractAddress}
               job={job}
             />
           </Tabs.Content>
@@ -411,7 +427,7 @@ const DepositToAddress = ({ amount, depositAddress, jobId, job, closeModel, coin
                 closeModel();
                 return router.push(`/overview`);
               },
-              onError: () => {},
+              onError: () => { },
             },
           );
         }}
@@ -429,10 +445,11 @@ interface PayWithWalletProps {
   amount: number;
   coin: SUPPORTED_COINS;
   depositAddress: string;
+  contractAddress?: string;
   closeModel: () => void;
 }
 
-const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job }: PayWithWalletProps) => {
+const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, contractAddress }: PayWithWalletProps) => {
   const { chain } = useNetwork();
   const { isConnected } = useAccount();
   const isWrongChain = chain?.unsupported;
@@ -462,7 +479,7 @@ const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job }:
         <DepositAvax jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} />
       )}
       {coin === 'USDC' && (
-        <DepositUSDC jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} />
+        <DepositUSDC jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} contractAddress={contractAddress} />
       )}
     </div>
   );
@@ -484,9 +501,8 @@ const WalletConnectorList: React.FC = () => {
             type="button"
             disabled={!connector.ready}
             onClick={() => connect({ connector: connector })}
-            className={`hover:border-primary flex items-center justify-between rounded-2xl border border-[#DFDFE6] p-1 px-4 py-3 text-left duration-300 hover:!border-opacity-30 ${
-              isActive ? 'border-primary !border-opacity-60 bg-green-50' : 'border-[#DFDFE6]'
-            }`}
+            className={`hover:border-primary flex items-center justify-between rounded-2xl border border-[#DFDFE6] p-1 px-4 py-3 text-left duration-300 hover:!border-opacity-30 ${isActive ? 'border-primary !border-opacity-60 bg-green-50' : 'border-[#DFDFE6]'
+              }`}
           >
             <span className="flex w-full items-center gap-2">
               <span>{connector.name}</span>
@@ -509,6 +525,7 @@ interface WalletDepositProps {
   depositAddress: string;
   job: Job;
   closeModel: () => void;
+  contractAddress?: string;
 }
 
 const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, jobId, job }) => {
@@ -568,20 +585,20 @@ const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, job
   );
 };
 
-const DepositUSDC: React.FC<WalletDepositProps> = ({ amount, depositAddress, jobId, job }) => {
+const DepositUSDC: React.FC<WalletDepositProps> = ({ amount, depositAddress, jobId, job, contractAddress }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const talentId = searchParams.get('talent-id') ?? '';
   const confirmPayment = useConfirmJobPayment();
   const inviteTalent = useInviteTalentToJob({ talentId, job });
   const [showReconfirmButton, setShowReconfirmButton] = React.useState(false);
-
+  const amountToPay = parseUnits(amount.toString(), 6);
   const { config } = usePrepareContractWrite({
     abi: erc20ABI,
     chainId: CHAIN_ID,
     functionName: 'transfer',
-    address: USDC_CONTRACT_ADDRESS,
-    args: [`0x${depositAddress.substring(2)}`, parseEther(`${amount}`, 'wei')],
+    address: `0x${contractAddress?.substring(2)}`,
+    args: [`0x${depositAddress.substring(2)}`, amountToPay],
   });
 
   const { write, isError, isLoading } = useContractWrite({

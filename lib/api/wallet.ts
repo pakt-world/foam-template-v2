@@ -134,3 +134,32 @@ export const useGetWalletTxs = ({
 
   return useQuery(getWalletTxQueryKey, options);
 };
+
+interface PaymentCoinsProps {
+  active: boolean;
+  contractAddress: string;
+  createdAt: string;
+  decimal: string;
+  isToken: boolean;
+  name: string;
+  reference: string;
+  rpcChainId: string;
+  symbol: string;
+  updatedAt: string;
+}
+
+const fetchPaymentCoins = async (): Promise<PaymentCoinsProps[]> => {
+  const res = await axios.get(`/payment/coins`)
+  return res.data.data;
+};
+
+export const useGetPaymentCoins = () => {
+  const getQueryIdKey = ["payment-coin"];
+  return useQuery({
+    queryFn: fetchPaymentCoins,
+    queryKey: getQueryIdKey,
+    onError: (error: any) => {
+      toast.error(error.response?.data.message || 'An error fetching talents occurred');
+    }
+  });
+};
