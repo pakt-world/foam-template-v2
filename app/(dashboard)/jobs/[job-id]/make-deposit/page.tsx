@@ -1,46 +1,66 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
-import { Button } from 'pakt-ui';
-import { cn } from '@/lib/utils';
-import { PostJobPaymentDetailsResponse, useConfirmJobPayment, useGetJobById } from '@/lib/api/job';
-import { RaceBy } from '@uiball/loaders';
-import { useInviteTalentToJob } from '@/lib/api/job';
-import { parseEther, parseUnits } from 'viem';
-import QRCode from 'react-qr-code';
-import { useSearchParams } from 'next/navigation';
-import { erc20ABI } from '@wagmi/core';
-import { Copy, Loader2, X, ChevronLeft } from 'lucide-react';
-import * as Tabs from '@radix-ui/react-tabs';
-import { Spinner } from '@/components/common';
-import { useCopyToClipboard } from 'usehooks-ts';
-import { usePostJobPaymentDetails } from '@/lib/api/job';
-import { avalanche, avalancheFuji } from '@wagmi/core/chains';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { publicProvider } from 'wagmi/providers/public';
-import { useRouter } from 'next/navigation';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { AlertCircle } from 'lucide-react';
-import { Modal } from '@/components/common/headless-modal';
-import { WagmiConfig, configureChains, createConfig } from 'wagmi';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 
 import {
+  AlertCircle,
+  ChevronLeft,
+  Copy,
+  Loader2,
+  X,
+} from 'lucide-react';
+import Image from 'next/image';
+import {
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { Button } from 'pakt-ui';
+import QRCode from 'react-qr-code';
+import { useCopyToClipboard } from 'usehooks-ts';
+import {
+  parseEther,
+  parseUnits,
+} from 'viem';
+import {
+  configureChains,
   Connector,
+  createConfig,
   useAccount,
   useConnect,
-  useNetwork,
-  useSwitchNetwork,
   useContractWrite,
+  useNetwork,
   usePrepareContractWrite,
   usePrepareSendTransaction,
   useSendTransaction,
+  useSwitchNetwork,
+  WagmiConfig,
 } from 'wagmi';
-import { set } from 'date-fns';
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { publicProvider } from 'wagmi/providers/public';
+
+import { Spinner } from '@/components/common';
+import { Modal } from '@/components/common/headless-modal';
+import {
+  PostJobPaymentDetailsResponse,
+  useConfirmJobPayment,
+  useGetJobById,
+  useInviteTalentToJob,
+  usePostJobPaymentDetails,
+} from '@/lib/api/job';
+import {
+  PaymentCoinsProps,
+  useGetPaymentCoins,
+} from '@/lib/api/wallet';
 import { Job } from '@/lib/types';
-import { useGetPaymentCoins } from '@/lib/api/wallet';
+import { cn } from '@/lib/utils';
+import * as Tabs from '@radix-ui/react-tabs';
+import { RaceBy } from '@uiball/loaders';
+import { erc20ABI } from '@wagmi/core';
+import {
+  avalanche,
+  avalancheFuji,
+} from '@wagmi/core/chains';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains([avalancheFuji, avalanche], [publicProvider()]);
 
@@ -108,6 +128,10 @@ export default function MakeDepositPage({ params }: Props) {
 
   console.log("coins==>", paymentCoinsData);
 
+  const getCoinIcon = (coin: PaymentCoinsProps) => {
+    return coin.icon ?? "/icons/usdc-logo.svg"
+  }
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <div className="flex flex-col gap-6 overflow-y-auto">
@@ -143,7 +167,7 @@ export default function MakeDepositPage({ params }: Props) {
                     setContractAddress(coin.contractAddress);
                   }}
                 >
-                  <Image src={coin.symbol == SUPPORTED_COINS.USDC ? "/icons/usdc-logo.svg" : "/icons/avax-logo.svg"} alt="Coinbase" width={30} height={30} />
+                  <Image src={getCoinIcon(coin)} alt="Coinbase" width={30} height={30} />
                   <span className="font-bold text-lg">{coin.symbol.toUpperCase()}</span>
                 </button>)}
                 {/* <button

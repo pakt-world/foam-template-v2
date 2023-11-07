@@ -1,7 +1,15 @@
-import { useQuery, type QueryKey, type UseQueryOptions } from '@tanstack/react-query';
-import { axios, ApiError, ApiResponse } from '@/lib/axios';
-import { useWalletState } from '@/lib/store/wallet';
 import { toast } from '@/components/common/toaster';
+import {
+  ApiError,
+  ApiResponse,
+  axios,
+} from '@/lib/axios';
+import { useWalletState } from '@/lib/store/wallet';
+import {
+  type QueryKey,
+  useQuery,
+  type UseQueryOptions,
+} from '@tanstack/react-query';
 
 export interface IWallet {
   totalWalletBalance: string;
@@ -135,7 +143,7 @@ export const useGetWalletTxs = ({
   return useQuery(getWalletTxQueryKey, options);
 };
 
-interface PaymentCoinsProps {
+export interface PaymentCoinsProps {
   active: boolean;
   contractAddress: string;
   createdAt: string;
@@ -145,6 +153,7 @@ interface PaymentCoinsProps {
   reference: string;
   rpcChainId: string;
   symbol: string;
+  icon: string;
   updatedAt: string;
 }
 
