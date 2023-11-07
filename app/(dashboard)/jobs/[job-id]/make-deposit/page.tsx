@@ -34,7 +34,6 @@ import {
   useSwitchNetwork,
   WagmiConfig,
 } from 'wagmi';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { publicProvider } from 'wagmi/providers/public';
@@ -75,12 +74,6 @@ const wagmiConfig = createConfig({
         shimDisconnect: true,
       },
     }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'Pakt',
-      },
-    }),
     new WalletConnectConnector({
       chains,
       options: {
@@ -91,9 +84,6 @@ const wagmiConfig = createConfig({
   publicClient,
   webSocketPublicClient,
 });
-
-const CHAIN_ID = 43113;
-const USDC_CONTRACT_ADDRESS = '0xa1ef10416440a13d555b9dc78f81153d13340588';
 
 const WALLET_LOGO: Record<string, string> = {
   MetaMask: '/icons/metamask.svg',
@@ -127,8 +117,6 @@ export default function MakeDepositPage({ params }: Props) {
     setPaymentCoin(coin);
     mutation.mutate({ jobId, coin });
   };
-
-  console.log(mutation.data);
 
   const getCoinIcon = (coin: PaymentCoinsProps) => {
     return coin.icon ?? "/icons/usdc-logo.svg"
@@ -244,7 +232,6 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </div>
       </div>
     );
-  console.log("payment--details", paymentDetails)
   const depositAddress = paymentDetails.address;
 
   return (
@@ -482,11 +469,9 @@ interface PayWithWalletProps {
 const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, contractAddress, chainId }: PayWithWalletProps) => {
   const { chain } = useNetwork();
   const { isConnected } = useAccount();
-  const isWrongChain = chain?.unsupported;
+  const isWrongChain = chain?.id !== chainId;
 
-  const { switchNetwork } = useSwitchNetwork({
-    chainId: chainId,
-  });
+  const { switchNetwork } = useSwitchNetwork({ chainId: chainId });
 
   // switch network if wrong chain
   React.useEffect(() => {
