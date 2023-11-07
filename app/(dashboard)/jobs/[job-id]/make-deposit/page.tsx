@@ -60,9 +60,11 @@ import { erc20ABI } from '@wagmi/core';
 import {
   avalanche,
   avalancheFuji,
+  base,
+  baseGoerli,
 } from '@wagmi/core/chains';
 
-const { chains, publicClient, webSocketPublicClient } = configureChains([avalancheFuji, avalanche], [publicProvider()]);
+const { chains, publicClient, webSocketPublicClient } = configureChains([avalancheFuji, avalanche, base, baseGoerli], [publicProvider()]);
 
 const wagmiConfig = createConfig({
   connectors: [
@@ -126,7 +128,7 @@ export default function MakeDepositPage({ params }: Props) {
     mutation.mutate({ jobId, coin });
   };
 
-  console.log("coins==>", paymentCoinsData);
+  console.log(mutation.data);
 
   const getCoinIcon = (coin: PaymentCoinsProps) => {
     return coin.icon ?? "/icons/usdc-logo.svg"
@@ -242,7 +244,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </div>
       </div>
     );
-  console.log(paymentDetails)
+  console.log("payment--details", paymentDetails)
   const depositAddress = paymentDetails.address;
 
   return (
@@ -298,6 +300,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
           coin={coin}
           coinAmount={paymentDetails?.amountToPay}
           contractAddress={contractAddress}
+          chainId={Number(paymentDetails?.chainId)}
         />
       </Modal>
 
@@ -320,10 +323,11 @@ interface MakePaymentModalProps {
   depositAddress: string;
   closeModal: () => void;
   coin: SUPPORTED_COINS;
+  chainId: number;
   contractAddress?: string;
 }
 
-const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, coin, contractAddress }: MakePaymentModalProps) => {
+const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, coin, contractAddress, chainId }: MakePaymentModalProps) => {
   return (
     <div className="flex w-full flex-col gap-6 bg-white p-6 border rounded-2xl max-w-[400px] mx-auto">
       <div className="flex w-full items-center justify-between">
@@ -362,6 +366,7 @@ const MakePaymentModal = ({ closeModal, depositAddress, jobId, job, coinAmount, 
               depositAddress={depositAddress}
               coin={coin}
               contractAddress={contractAddress}
+              chainId={chainId}
               job={job}
             />
           </Tabs.Content>
@@ -470,16 +475,17 @@ interface PayWithWalletProps {
   coin: SUPPORTED_COINS;
   depositAddress: string;
   contractAddress?: string;
+  chainId: number;
   closeModel: () => void;
 }
 
-const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, contractAddress }: PayWithWalletProps) => {
+const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, contractAddress, chainId }: PayWithWalletProps) => {
   const { chain } = useNetwork();
   const { isConnected } = useAccount();
   const isWrongChain = chain?.unsupported;
 
   const { switchNetwork } = useSwitchNetwork({
-    chainId: CHAIN_ID,
+    chainId: chainId,
   });
 
   // switch network if wrong chain
@@ -500,10 +506,10 @@ const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, c
       <WalletConnectorList />
 
       {coin === 'AVAX' && (
-        <DepositAvax jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} />
+        <DepositAvax jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} chainId={chainId} />
       )}
       {coin === 'USDC' && (
-        <DepositUSDC jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} contractAddress={contractAddress} />
+        <DepositUSDC jobId={jobId} amount={amount} depositAddress={depositAddress} closeModel={closeModel} job={job} contractAddress={contractAddress} chainId={chainId} />
       )}
     </div>
   );
@@ -512,7 +518,6 @@ const PayWithWallet = ({ amount, depositAddress, jobId, closeModel, coin, job, c
 const WalletConnectorList: React.FC = () => {
   const { isConnected, connector: activeConnector } = useAccount();
   const { connect, connectors, isLoading, pendingConnector } = useConnect();
-
   return (
     <div className="flex flex-col gap-6">
       {connectors.map((connector: Connector) => {
@@ -549,10 +554,11 @@ interface WalletDepositProps {
   depositAddress: string;
   job: Job;
   closeModel: () => void;
+  chainId: number;
   contractAddress?: string;
 }
 
-const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, jobId, job }) => {
+const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, jobId, job, chainId }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const confirmPayment = useConfirmJobPayment();
@@ -560,7 +566,7 @@ const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, job
   const inviteTalent = useInviteTalentToJob({ talentId, job });
 
   const { config } = usePrepareSendTransaction({
-    chainId: CHAIN_ID,
+    chainId,
     to: depositAddress,
     value: parseEther(amount.toString()),
   });
@@ -609,7 +615,7 @@ const DepositAvax: React.FC<WalletDepositProps> = ({ depositAddress, amount, job
   );
 };
 
-const DepositUSDC: React.FC<WalletDepositProps> = ({ amount, depositAddress, jobId, job, contractAddress }) => {
+const DepositUSDC: React.FC<WalletDepositProps> = ({ amount, depositAddress, jobId, job, contractAddress, chainId }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const talentId = searchParams.get('talent-id') ?? '';
@@ -619,7 +625,7 @@ const DepositUSDC: React.FC<WalletDepositProps> = ({ amount, depositAddress, job
   const amountToPay = parseUnits(amount.toString(), 6);
   const { config } = usePrepareContractWrite({
     abi: erc20ABI,
-    chainId: CHAIN_ID,
+    chainId,
     functionName: 'transfer',
     address: `0x${contractAddress?.substring(2)}`,
     args: [`0x${depositAddress.substring(2)}`, amountToPay],
