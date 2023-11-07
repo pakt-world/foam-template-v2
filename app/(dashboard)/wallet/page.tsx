@@ -1,14 +1,26 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+} from 'react';
+
+import dayjs from 'dayjs';
 import Image from 'next/image';
 import { Button } from 'pakt-ui';
-import { formatUsd } from '@/lib/utils';
-import dayjs from 'dayjs';
-import { fetchWalletStats, useGetWalletDetails, useGetWalletTxs } from '@/lib/api/wallet';
+
+import {
+  chartDataProps,
+  WalletBalanceChart,
+} from '@/components/wallet/chart';
 import { WalletTransactions } from '@/components/wallet/transactions';
-import { WalletBalanceChart, chartDataProps } from '@/components/wallet/chart';
 import { WithdrawalModal } from '@/components/wallet/withdrawalModal';
+import {
+  fetchWalletStats,
+  useGetWalletDetails,
+  useGetWalletTxs,
+} from '@/lib/api/wallet';
+import { formatUsd } from '@/lib/utils';
 import { PaginationState } from '@tanstack/react-table';
 
 const dateFormat = 'DD/MM/YYYY';
@@ -83,7 +95,6 @@ export default function Wallet() {
           j++;
         }
       }
-      console.log(mainData);
       return mainData as any;
     }
 
@@ -115,6 +126,10 @@ export default function Wallet() {
     fetchWalletTx();
   }, [pageIndex, pageSize]);
 
+  const getWalletIcon = (wallet: any) => {
+    return wallet.icon ?? '/icons/usdc-logo.svg';
+  }
+
   return (
     <div className="flex flex-col h-full gap-6 overflow-auto">
       <div className="gap-6 flex flex-col h-full">
@@ -141,7 +156,7 @@ export default function Wallet() {
                   }}
                 >
                   <Image
-                    src={w.coin == 'avax' ? '/icons/avax-logo.svg' : '/icons/usdc-logo.svg'}
+                    src={getWalletIcon(w)}
                     width={75}
                     height={75}
                     alt=""

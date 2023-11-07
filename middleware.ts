@@ -34,7 +34,7 @@ export function middleware(request: NextRequest) {
 }
 
 const redirectToLogin = (request: NextRequest) => {
-  request.cookies.clear()
+  request.cookies.clear();
   const redirectUrl = AUTH_URL;
   return NextResponse.redirect(new URL(redirectUrl, request.url));
 };
