@@ -1,10 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import {
-  AUTH_TOKEN_KEY,
-  decodeJWTPayload,
-} from '@/lib/utils';
+import { AUTH_TOKEN_KEY } from '@/lib/utils';
 
 const DASHBOARD_URL = '/overview';
 const AUTH_URL = '/login';
@@ -27,8 +24,8 @@ export function middleware(request: NextRequest) {
       return redirectToLogin(request);
     }
   } else {
-    const payload = decodeJWTPayload(token.value);
-    if (payload.exp < Date.now() / 1000) return redirectToLogin(request);
+    // const payload = decodeJWTPayload(token.value);
+    // if (payload.exp < Date.now() / 1000) return redirectToLogin(request);
     if (authRoutes.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL(DASHBOARD_URL, request.url));
     }
@@ -37,6 +34,7 @@ export function middleware(request: NextRequest) {
 }
 
 const redirectToLogin = (request: NextRequest) => {
+  request.cookies.clear()
   const redirectUrl = AUTH_URL;
   return NextResponse.redirect(new URL(redirectUrl, request.url));
 };
