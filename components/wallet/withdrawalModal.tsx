@@ -1,17 +1,35 @@
 'use client';
 import React, { useState } from 'react';
-import * as z from 'zod';
-import { ChevronLeft, X } from 'lucide-react';
+
+import {
+  ChevronLeft,
+  X,
+} from 'lucide-react';
 import Image from 'next/image';
-import { Button, Select, Input, Checkbox, Text } from 'pakt-ui';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Select,
+  Text,
+} from 'pakt-ui';
+import {
+  Controller,
+  SubmitHandler,
+  useForm,
+} from 'react-hook-form';
+import * as z from 'zod';
 
 import { SideModal } from '@/components/common/side-modal';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { avax, usdc } from '@/images/coins';
 import { useWithdraw } from '@/lib/api/withdraw';
-import { InputErrorMessage, OtpInput, Spinner } from '../common';
 import { useUserState } from '@/lib/store/account';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import {
+  InputErrorMessage,
+  OtpInput,
+  Spinner,
+} from '../common';
 
 const withdrawFormSchema = z.object({
   coin: z.string().min(1, 'Password is required'),
@@ -64,13 +82,17 @@ export const WithdrawalModal = ({
     });
   };
 
-  const renderOption = (coin: string, balance: string) => (
+  const getWalletIcon = (wallet: any) => {
+    return wallet.icon ?? '/icons/usdc-logo.svg';
+  }
+
+  const renderOption = (icon: string, coin: string, balance: string) => (
     <div className="flex flex-row text-lg">
       <Image
         width={25}
         height={25}
         className="w-[25px] h-[25px] mr-4"
-        src={coin == 'avax' ? avax : usdc}
+        src={icon}
         alt={`logo for currency`}
       />
       {coin.toUpperCase()} (${balance})
@@ -98,7 +120,7 @@ export const WithdrawalModal = ({
               // @ts-ignore
               options={wallets.map((s: any) => {
                 return {
-                  label: renderOption(s.coin, s.usdValue),
+                  label: renderOption(getWalletIcon(s), s.coin, s.usdValue),
                   value: s.coin.toUpperCase(),
                 };
               })}
