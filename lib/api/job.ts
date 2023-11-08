@@ -47,7 +47,7 @@ export function useCreateJob() {
       if (!isPrivate) {
         await createFeed.mutate({
           //@ts-ignore
-          owners: [creator],
+          owners: [creator?._id],
           title: name,
           description: description,
           data: _id,
