@@ -67,6 +67,7 @@ interface GetJobsParams {
   limit?: number;
   category: 'open' | 'created' | 'assigned';
   status?: 'pending' | 'ongoing' | 'completed' | 'cancelled';
+  filter?: Record<string, any>;
 }
 
 interface GetJobsResponse {
@@ -85,6 +86,7 @@ async function getJobs(params: GetJobsParams): Promise<GetJobsResponse> {
       isPrivate: params.category === 'open' ? false : undefined,
       receiver: params.category === 'assigned' ? true : undefined,
       status: params.status,
+      ...params.filter,
     },
   });
   return res.data.data;
@@ -101,7 +103,6 @@ export function useGetJobs(params: GetJobsParams) {
 }
 
 // Get Job By Id
-
 interface GetJobByIdParams {
   jobId: string;
   extras?: string;
