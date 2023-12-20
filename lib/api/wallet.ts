@@ -1,15 +1,7 @@
 import { toast } from '@/components/common/toaster';
-import {
-  ApiError,
-  ApiResponse,
-  axios,
-} from '@/lib/axios';
+import { ApiError, ApiResponse, axios } from '@/lib/axios';
 import { useWalletState } from '@/lib/store/wallet';
-import {
-  type QueryKey,
-  useQuery,
-  type UseQueryOptions,
-} from '@tanstack/react-query';
+import { type QueryKey, useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 export interface IWallet {
   totalWalletBalance: string;
@@ -177,7 +169,7 @@ export interface ActiveRPCProps {
   rpcName: string;
   rpcChainId: string;
   rpcUrls: string[];
-  blockExplorerUrls: string[],
+  blockExplorerUrls: string[];
 }
 
 const fetchRPCServer = async (): Promise<ActiveRPCProps> => {
