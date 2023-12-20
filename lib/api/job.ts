@@ -1,7 +1,15 @@
 import { toast } from '@/components/common/toaster';
-import { ApiError, ApiResponse, axios } from '@/lib/axios';
+import {
+  ApiError,
+  ApiResponse,
+  axios,
+} from '@/lib/axios';
 import type { Job } from '@/lib/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { FEED_TYPES } from '../utils';
 import { useCreateFeed } from './feed';
@@ -67,6 +75,7 @@ interface GetJobsParams {
   limit?: number;
   category: 'open' | 'created' | 'assigned';
   status?: 'pending' | 'ongoing' | 'completed' | 'cancelled';
+  filter?: Record<string, any>;
 }
 
 interface GetJobsResponse {
@@ -85,6 +94,7 @@ async function getJobs(params: GetJobsParams): Promise<GetJobsResponse> {
       isPrivate: params.category === 'open' ? false : undefined,
       receiver: params.category === 'assigned' ? true : undefined,
       status: params.status,
+      ...params.filter
     },
   });
   return res.data.data;
@@ -101,13 +111,12 @@ export function useGetJobs(params: GetJobsParams) {
 }
 
 // Get Job By Id
-
 interface GetJobByIdParams {
   jobId: string;
   extras?: string;
 }
 
-interface GetJobByIdResponse extends Job {}
+interface GetJobByIdResponse extends Job { }
 
 async function getJobById(params: GetJobByIdParams): Promise<GetJobByIdResponse> {
   const res = await axios.get(`/collection/${params.jobId}`);
