@@ -1,30 +1,18 @@
 import React, { useState } from 'react';
-
-import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
+import type { Bookmark, Job } from '@/lib/types';
+import { Tabs } from '@/components/common/tabs';
 import { useDebounce } from 'usehooks-ts';
-
+import { createQueryStrings2 } from '@/lib/utils';
+import { OpenJobCard } from '@/components/jobs/job-cards/open-job';
+import { paginate } from '@/lib/utils';
+import { useGetJobs } from '@/lib/api/job';
 import { PageEmpty } from '@/components/common/page-empty';
 import { PageError } from '@/components/common/page-error';
 import { PageLoading } from '@/components/common/page-loading';
-import { Pagination } from '@/components/common/pagination';
-import { OpenJobCard } from '@/components/jobs/job-cards/open-job';
 import { useGetBookmarks } from '@/lib/api/bookmark';
-import { useGetJobs } from '@/lib/api/job';
-import type {
-  Bookmark,
-  Job,
-} from '@/lib/types';
-import {
-  createQueryStrings2,
-  paginate,
-} from '@/lib/utils';
-
-import { NumericInput } from '../common/numeric-input';
-import { Tabs } from '../common/tabs';
+import { Pagination } from '@/components/common/pagination';
+import { NumericInput } from '@/components/common/numeric-input';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 export const OpenJobs = () => {
   const router = useRouter();
@@ -37,17 +25,17 @@ export const OpenJobs = () => {
   const [skillsQuery, setSkillsQuery] = useState(searchParams.get('skills') || '');
   const debouncedSkillsQuery = useDebounce(skillsQuery, 300);
 
-  const [minimumPriceQuery, setMinimumPriceQuery] = useState(searchParams.get('range')?.split(',')[0]);
+  const [minimumPriceQuery, setMinimumPriceQuery] = useState(searchParams.get('range')?.split(',')[0] || 0);
   const debouncedMinimumPriceQuery = useDebounce(minimumPriceQuery, 300);
 
-  const [maximumPriceQuery, setMaximumPriceQuery] = useState(searchParams.get('range')?.split(',')[1]);
+  const [maximumPriceQuery, setMaximumPriceQuery] = useState(searchParams.get('range')?.split(',')[1] || 100);
   const debouncedMaximumPriceQuery = useDebounce(maximumPriceQuery, 300);
 
   React.useEffect(() => {
     const queries = createQueryStrings2({
       skills: debouncedSkillsQuery ?? '',
       search: debouncedSearchQuery ?? '',
-      range: (debouncedMinimumPriceQuery || debouncedMaximumPriceQuery) ? `${debouncedMinimumPriceQuery ?? 0},${debouncedMaximumPriceQuery}` : '',
+      range: `${debouncedMinimumPriceQuery ?? 0},${debouncedMaximumPriceQuery ?? 100}`,
     });
 
     router.push(`${pathname}?${queries}`);
@@ -60,12 +48,7 @@ export const OpenJobs = () => {
     debouncedMaximumPriceQuery,
   ]);
 
-  const queryParams = new URLSearchParams(searchParams as any);
-  const searchQ = queryParams.get('search') || '';
-  const skillQ = queryParams.get('skills') || '';
-  const rangeQ = queryParams.get('range') || '';
-  console.log(searchQ, skillQ, rangeQ)
-  const jobsData = useGetJobs({ category: 'open', status: 'pending', filter: { search: searchQ, tags: skillQ, range: rangeQ } });
+  const jobsData = useGetJobs({ category: 'open', status: 'pending' });
   const bookmarkData = useGetBookmarks({ page: 1, limit: 5, filter: { type: 'collection' } });
 
   if (jobsData.isError || bookmarkData.isError)
