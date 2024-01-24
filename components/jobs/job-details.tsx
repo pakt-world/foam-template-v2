@@ -1,103 +1,123 @@
-import Image from 'next/image';
-import { format } from 'date-fns';
-import { Calendar, Tag } from 'lucide-react';
-import { AfroScore, AfroProfile } from '@/components/common/afro-profile';
-import { DefaultAvatar } from '@/components/common/default-avatar';
+"use client";
+
+/* -------------------------------------------------------------------------- */
+/*                             External Dependency                            */
+/* -------------------------------------------------------------------------- */
+
+import { type ReactElement } from "react";
+import { format } from "date-fns";
+import { Calendar, Tag } from "lucide-react";
+
+/* -------------------------------------------------------------------------- */
+/*                             Internal Dependency                            */
+/* -------------------------------------------------------------------------- */
+
+import { AfroProfile } from "@/components/common/afro-profile";
+import { sentenceCase } from "@/lib/utils";
+
 interface JobHeaderProps {
-  title: string;
-  price: number;
-  dueDate: string;
-  creator?: {
-    _id: string;
-    name: string;
-    score: number;
-    avatar?: string;
-  };
+    title: string;
+    price: number;
+    dueDate: string;
+    creator?: {
+        _id: string;
+        name: string;
+        score: number;
+        avatar?: string;
+    };
 }
 
-export const JobHeader: React.FC<JobHeaderProps> = ({ title, price, dueDate, creator }) => {
-  return (
-    <div className="bg-primary-gradient rounded-t-xl justify-between items-center flex p-4 gap-4">
-      <div className="max-w-2xl flex flex-col gap-6 w-full h-full">
-        <div className="grow pt-3">
-          <h2 className="text-3xl font-medium text-white">{title}</h2>
-        </div>
-        <div className="flex gap-4 items-center mt-auto">
-          <span className="bg-[#ECFCE5] text-[#198155] gap-2 flex items-center px-3 rounded-full py-1">
-            <Tag size={20} />
-            <span>$ {price}</span>
-          </span>
+export const JobHeader = ({ title, price, dueDate, creator }: JobHeaderProps): ReactElement => {
+    // Handle due date error
+    const dueDateError = new Date(dueDate).toString() === "Invalid Date";
+    const dueDateValue = dueDateError ? new Date() : new Date(dueDate);
+    return (
+        <div className="flex items-center justify-between gap-4 rounded-t-xl bg-primary-gradient p-4">
+            <div className="flex h-full w-full max-w-2xl flex-col gap-6">
+                <div className="grow pt-3">
+                    <h2 className="text-3xl font-medium text-white">{title}</h2>
+                </div>
+                <div className="mt-auto flex items-center gap-4">
+                    <span className="flex items-center gap-2 rounded-full bg-[#ECFCE5] px-3 py-1 text-[#198155]">
+                        <Tag size={20} />
+                        <span>$ {price}</span>
+                    </span>
 
-          <span className="bg-[#C9F0FF] text-[#0065D0] gap-2 flex items-center px-3 rounded-full py-1">
-            <Calendar size={20} />
-            <span>Due {format(new Date(dueDate), 'MMM dd, yyyy')}</span>
-          </span>
+                    <span className="flex items-center gap-2 rounded-full bg-[#C9F0FF] px-3 py-1 text-[#0065D0]">
+                        <Calendar size={20} />
+                        <span>Due {format(dueDateValue, "MMM dd, yyyy")}</span>
+                    </span>
+                </div>
+            </div>
+            {creator?._id && (
+                <div className="flex flex-col items-center gap-0 text-center">
+                    <AfroProfile
+                        src={creator.avatar}
+                        size="2md"
+                        score={creator.score}
+                        url={`/talents/${creator._id}`}
+                    />
+                    <span className="whitespace-nowrap text-xl font-bold text-white">{creator.name}</span>
+                </div>
+            )}
         </div>
-      </div>
-      {creator && creator._id && (
-        <div className="flex flex-col text-center gap-0 items-center">
-          <AfroProfile src={creator.avatar} size="2md" score={creator.score} url={`/talents/${creator._id}`} />
-          <span className="text-white text-xl whitespace-nowrap font-bold">{creator.name}</span>
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
 interface JobDescriptionProps {
-  description: string;
+    description: string;
 }
 
-export const JobDescription: React.FC<JobDescriptionProps> = ({ description }) => {
-  return (
-    <div className="flex gap-2 flex-col w-full">
-      <h3 className="text-title text-lg font-bold">Job Description</h3>
-      <p className="text-lg font-normal text-[#202325] bg-[#C9F0FF] p-4 rounded-2xl border border-blue-200">
-        {description}
-      </p>
-    </div>
-  );
+export const JobDescription = ({ description }: JobDescriptionProps): ReactElement => {
+    return (
+        <div className="flex w-full flex-col gap-2">
+            <h3 className="text-lg font-bold text-title">Job Description</h3>
+            <p className="rounded-2xl border border-blue-200 bg-[#C9F0FF] p-4 text-lg font-normal text-[#202325]">
+                {description}
+            </p>
+        </div>
+    );
 };
 
 interface JobSkillsProps {
-  skills: { name: string; color: string }[];
+    skills: Array<{ name: string; color: string }>;
 }
 
-export const JobSkills: React.FC<JobSkillsProps> = ({ skills }) => {
-  return (
-    <div className="bg-white rounded-2xl flex flex-col gap-2 w-full pb-4">
-      <h3 className="text-title text-lg font-bold">Preferred Skills</h3>
-      <div className="flex flex-wrap gap-2">
-        {skills.map((skill, index) => (
-          <span
-            key={index}
-            className="bg-[#F7F9FA] w-fit whitespace-nowrap text-[#090A0A] rounded-full px-4 py-2"
-            style={{ background: skill.color }}
-          >
-            {skill.name}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
+export const JobSkills = ({ skills }: JobSkillsProps): ReactElement => {
+    return (
+        <div className="flex w-full flex-col gap-2 rounded-2xl bg-white pb-4">
+            <h3 className="text-lg font-bold text-title">Preferred Skills</h3>
+            <div className="flex flex-wrap gap-2">
+                {skills.map((skill, index) => (
+                    <span
+                        key={index}
+                        className="w-fit whitespace-nowrap rounded-full bg-[#F7F9FA] px-4 py-2 text-[#090A0A]"
+                        style={{ background: skill.color }}
+                    >
+                        {sentenceCase(skill.name)}
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 interface DeliverablesProps {
-  deliverables: string[];
+    deliverables: string[];
 }
 
-export const JobDeliverables: React.FC<DeliverablesProps> = ({ deliverables }) => {
-  return (
-    <div className="bg-white rounded-2xl flex flex-col gap-2 w-full py-4 h-full">
-      <h3 className="text-title text-lg font-bold">Deliverables</h3>
+export const JobDeliverables = ({ deliverables }: DeliverablesProps): ReactElement => {
+    return (
+        <div className="flex h-full w-full flex-col gap-2 rounded-2xl bg-white py-4">
+            <h3 className="text-lg font-bold text-title">Deliverables</h3>
 
-      <div className="flex flex-col gap-4 overflow-y-auto h-full">
-        {deliverables.map((deliverable, index) => (
-          <div key={index} className="rounded-md bg-[#F7F9FA] p-4 text-[#090A0A]">
-            {deliverable}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+            <div className="flex h-full flex-col gap-4 overflow-y-auto">
+                {deliverables.map((deliverable, index) => (
+                    <div key={index} className="rounded-md bg-[#F7F9FA] p-4 text-[#090A0A]">
+                        {deliverable}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };

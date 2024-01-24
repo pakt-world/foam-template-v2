@@ -11,17 +11,4 @@ import walletCoin from "./wallet_coin.svg";
 import meta from "./meta.svg";
 import plus from "./plus.svg";
 
-export {
-  avax,
-  btc,
-  coinbase,
-  eye_coin,
-  usdc,
-  metamask,
-  w_oval,
-  gh,
-  portis,
-  walletCoin,
-  meta,
-  plus,
-};
+export { avax, btc, coinbase, eye_coin, usdc, metamask, w_oval, gh, portis, walletCoin, meta, plus };

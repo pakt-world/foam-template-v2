@@ -1,5 +1,9 @@
-import { PageLoading } from '@/components/common/page-loading';
+/* -------------------------------------------------------------------------- */
+/*                             Internal Dependency                            */
+/* -------------------------------------------------------------------------- */
 
-export default function Loading() {
-  return <PageLoading />;
+import { PageLoading } from "@/components/common/page-loading";
+
+export default function Loading(): React.JSX.Element {
+    return <PageLoading />;
 }

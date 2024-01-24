@@ -1,6 +1,11 @@
+/* -------------------------------------------------------------------------- */
+/*                             External Dependency                            */
+/* -------------------------------------------------------------------------- */
 
-export const emptyAchievement = () => {
-  return <></>
+import { type ReactElement } from "react";
+
+export const emptyAchievement = (): ReactElement => {
+    return <div />;
 };
 
-export const achievementMap: Record<string, any> = {};
+export const achievementMap: Record<string, unknown> = {};

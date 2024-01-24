@@ -1,10 +1,14 @@
-import { cn } from '@/lib/utils';
+/* -------------------------------------------------------------------------- */
+/*                             Internal Dependency                            */
+/* -------------------------------------------------------------------------- */
+
+import { cn } from "@/lib/utils";
 
 interface Props {
-  children: React.ReactNode;
-  className?: string;
+    children: React.ReactNode;
+    className?: string;
 }
 
-export const Container: React.FC<Props> = ({ children, className }) => {
-  return <div className={`${cn('container w-full px-4 mx-auto', className)}`}>{children}</div>;
+export const Container = ({ children, className }: Props): React.JSX.Element => {
+    return <div className={`${cn("container mx-auto w-full px-4", className)}`}>{children}</div>;
 };
