@@ -61,6 +61,33 @@ jobs:
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+    delete-untagged-images-dev:
+        runs-on: ubuntu-latest
+        needs: build-dev
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Configure AWS credentials
+              run: |
+                  aws configure set aws_access_key_id ${{ env.AWS_KEY }}
+                  aws configure set aws_secret_access_key ${{ env.AWS_SECRET }}
+                  aws configure set region us-east-1
+
+            - name: Delete untagged images
+              run: |
+                  # Get the repository URI
+                  repository_uri=$(aws ecr describe-repositories --repository-names ${{env.ECR_REPOSITORY}} --query 'repositories[0].repositoryUri' --output text)
+
+                  # List images with no tag and filter the imageDigest
+                  untagged_images=$(aws ecr list-images --repository-name ${{env.ECR_REPOSITORY}} --filter tagStatus=UNTAGGED --query 'imageIds[*].imageDigest' --output text)
+
+                  # Delete each untagged image
+                  for digest in $untagged_images; do
+                    aws ecr batch-delete-image --repository-name ${{env.ECR_REPOSITORY}} --image-ids imageDigest=$digest
+                  done
+
     build-live:
         needs: build-dev
         name: Build and Push Image to ECR
@@ -109,3 +136,30 @@ jobs:
               run: |
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+    delete-untagged-images-live:
+        runs-on: ubuntu-latest
+        needs: build-live
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Configure AWS credentials
+              run: |
+                  aws configure set aws_access_key_id ${{ env.AWS_KEY_LIVE }}
+                  aws configure set aws_secret_access_key ${{ env.AWS_SECRET_LIVE }}
+                  aws configure set region us-east-1
+
+            - name: Delete untagged images
+              run: |
+                  # Get the repository URI
+                  repository_uri=$(aws ecr describe-repositories --repository-names ${{env.ECR_REPOSITORY}} --query 'repositories[0].repositoryUri' --output text)
+
+                  # List images with no tag and filter the imageDigest
+                  untagged_images=$(aws ecr list-images --repository-name ${{env.ECR_REPOSITORY}} --filter tagStatus=UNTAGGED --query 'imageIds[*].imageDigest' --output text)
+
+                  # Delete each untagged image
+                  for digest in $untagged_images; do
+                    aws ecr batch-delete-image --repository-name ${{env.ECR_REPOSITORY}} --image-ids imageDigest=$digest
+                  done
