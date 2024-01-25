@@ -4,7 +4,7 @@
 /*                             External Dependency                            */
 /* -------------------------------------------------------------------------- */
 
-import { Copy } from "lucide-react";
+import { Copy, CopyCheck } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "pakt-ui";
 import QRCode from "react-qr-code";
@@ -66,9 +66,9 @@ export const DepositToAddress = ({
                     onClick={async () => copy(depositAddress)}
                     type="button"
                 >
-                    <Copy size={14} strokeWidth={2} />
+                    {value !== null ? <CopyCheck size={14} strokeWidth={2} /> : <Copy size={14} strokeWidth={2} />}
                     <span>
-                        {value !== undefined ? (
+                        {value !== null ? (
                             <span className="animate-pulse">Copied</span>
                         ) : (
                             <span className="animate-pulse">Copy</span>

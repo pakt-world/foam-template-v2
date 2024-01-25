@@ -105,6 +105,8 @@ export default function JobApplications({ params }: Props): React.JSX.Element {
 
     const paginatedApplicants = paginate(filteredApplicants, itemsPerPage, currentPage);
 
+    const skills = job.tagsData.join(",");
+
     return (
         <div className="flex h-full flex-col gap-6">
             <div className="flex justify-between gap-4 rounded-xl bg-primary-gradient p-4 py-6">
@@ -183,7 +185,7 @@ export default function JobApplications({ params }: Props): React.JSX.Element {
                                 className="w-full"
                                 fullWidth
                                 onClick={() => {
-                                    router.push(`/talents`);
+                                    router.push(`/talents${skills ? `?skills=${skills}` : ""}`);
                                 }}
                             >
                                 Find Talent

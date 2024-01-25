@@ -113,7 +113,7 @@ export const ReviewChangeCard = ({
             </div>
 
             <div className="absolute right-0 top-16 -z-[1] translate-x-1/3">
-                <Briefcase size={200} color="#F2F4F5" />
+                <Briefcase size={200} color="#FFE5E5" />
             </div>
 
             <SideModal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>

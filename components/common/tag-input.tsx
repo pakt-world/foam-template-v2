@@ -142,10 +142,6 @@ export const TagInput: FC<TagInputProps> = ({ tags, setTags, className, placehol
     );
 };
 
-// import React from "react";
-// import { cn } from "@/lib/utils";
-// import { X } from "lucide-react";
-
 interface TagInputProps2 {
     tags: string[];
     setTags: (tags: string[]) => void;

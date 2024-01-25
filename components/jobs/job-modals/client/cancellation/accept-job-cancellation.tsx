@@ -28,16 +28,18 @@ interface AcceptJobCancellationProps {
 export const AcceptJobCancellation: FC<AcceptJobCancellationProps> = ({ setAcceptCancellation, talent, job }) => {
     const cancelJobMutation = useAcceptJobCancellation();
 
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState("");
-    const [percentageToPay, setPercentageToPay] = useState(job.progress);
-
-    const amountToPay = (percentageToPay / 100) * job.paymentFee;
-
     const totalDeliverables = job.collections.filter(isJobDeliverable).length;
     const completedDeliverables = job.collections
         .filter(isJobDeliverable)
         .filter((deliverable) => deliverable.progress === 100).length;
+
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [percentageToPay, setPercentageToPay] = useState(
+        Math.floor((completedDeliverables / totalDeliverables) * 100),
+    );
+
+    const amountToPay = (percentageToPay / 100) * job.paymentFee;
 
     return (
         <>
