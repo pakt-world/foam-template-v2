@@ -14,11 +14,11 @@ import { useRouter } from "next/navigation";
 import { PageLoading } from "@/components/common/page-loading";
 
 export default function Home(): JSX.Element {
-    const router = useRouter();
+	const router = useRouter();
 
-    useEffect(() => {
-        router.replace("/overview");
-    }, [router]);
+	useEffect(() => {
+		router.replace("/overview");
+	}, [router]);
 
-    return <PageLoading color="#007C5B" />;
+	return <PageLoading color="#007C5B" />;
 }

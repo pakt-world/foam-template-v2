@@ -5,8 +5,8 @@
 /* -------------------------------------------------------------------------- */
 
 import {
-    type ReactElement,
-    // useState
+	type ReactElement,
+	// useState
 } from "react";
 // import { Button, Slider } from "pakt-ui";
 // import { XCircle } from "lucide-react";
@@ -20,20 +20,20 @@ import {
 // import { AfroScore } from "@/components/common/afro-profile";
 // import { useGetConnectionPreference, useUpdateConnectionPreference } from "@/lib/api/connection";
 import { useMessaging } from "@/providers/socketProvider";
-import { ChatList } from "@/components/messaging/chat-list/chatlist";
-import { ChatListSearch } from "@/components/messaging/chat-list/chat-list-search";
+import { ChatList } from "@/components/messages/chat-list/chatlist";
+import { ChatListSearch } from "@/components/messages/chat-list/chat-list-search";
 
 interface Props {
-    children: React.ReactNode;
+	children: React.ReactNode;
 }
 
 export default function MessagesLayout({ children }: Props): ReactElement {
-    // const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
-    const { conversations, loadingChats } = useMessaging();
+	// const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
+	const { conversations, loadingChats } = useMessaging();
 
-    return (
-        <div className="flex h-full flex-col gap-0">
-            {/* <div className="flex items-center justify-between">
+	return (
+		<div className="flex h-full flex-col gap-0">
+			{/* <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Modal isOpen={settingsModalOpen} onOpenChange={setSettingsModalOpen} className="max-w-xl">
             <SettingsModal />
@@ -41,25 +41,28 @@ export default function MessagesLayout({ children }: Props): ReactElement {
         </div>
       </div> */}
 
-            <div className="mb-4 flex w-full grow">
-                <div className="flex h-full shrink-0 grow-0 basis-[370px] flex-col rounded-lg rounded-r-none border border-line bg-white">
-                    <ChatListSearch />
-                    {/* <div className="flex relative items-center gap-2 px-4 pb-6">
+			<div className="mb-4 flex w-full grow h-[90%]">
+				<div className="flex h-full shrink-0 grow-0 basis-[370px] flex-col rounded-lg rounded-r-none border border-line bg-white">
+					<ChatListSearch />
+					{/* <div className="flex relative items-center gap-2 px-4 pb-6">
             <Button variant={'outline'} className="!px-4 !py-2" onClick={() => setSettingsModalOpen(true)}>
               <span className="flex flex-row text-sm font-bold items-center">
                 Set Connection Preference <Settings className="ml-2" size={16} />
               </span>
             </Button>
           </div> */}
-                    <ChatList conversations={conversations} loading={loadingChats} />
-                </div>
+					<ChatList
+						conversations={conversations}
+						loading={loadingChats}
+					/>
+				</div>
 
-                <div className="flex h-full w-full grow flex-col rounded-lg rounded-l-none border border-l-0 border-line bg-white p-6 pt-3">
-                    {children}
-                </div>
-            </div>
-        </div>
-    );
+				<div className="flex h-full w-full grow flex-col rounded-lg rounded-l-none border border-l-0 border-line bg-white p-6 pt-3">
+					{children}
+				</div>
+			</div>
+		</div>
+	);
 }
 
 // const SettingsModal = (): React.JSX.Element => {

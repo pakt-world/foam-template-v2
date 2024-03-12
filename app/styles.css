@@ -3,42 +3,45 @@
 @tailwind utilities;
 
 @layer utilities {
-    .scrollbar-hide {
-        /* IE and Edge */
-        -ms-overflow-style: none !important;
-        /* Firefox */
-        scrollbar-width: none !important;
-    }
+	.scrollbar-hide {
+		/* IE and Edge */
+		-ms-overflow-style: none !important;
+		/* Firefox */
+		scrollbar-width: none !important;
+	}
 
-    .scrollbar-hide::-webkit-scrollbar {
-        /* Safari and Chrome */
-        display: none;
-        width: 0 !important;
-    }
+	.scrollbar-hide::-webkit-scrollbar {
+		/* Safari and Chrome */
+		display: none;
+		width: 0 !important;
+	}
 
-    .scrollbar-default {
-        /* IE and Edge */
-        -ms-overflow-style: "auto";
-        /* Firefox */
-        scrollbar-width: "auto";
-    }
+	.scrollbar-default {
+		/* IE and Edge */
+		-ms-overflow-style: "auto";
+		/* Firefox */
+		scrollbar-width: "auto";
+	}
 
-    .scrollbar-default::-webkit-scrollbar {
-        /* Safari and Chrome */
-        display: "block";
-        width: "auto";
-    }
-    .blazer-extras {
-        --slide-width: calc((90% - (var(--slides-to-show) - 1) * var(--slide-gap)) / var(--slides-to-show)) !important;
-    }
+	.scrollbar-default::-webkit-scrollbar {
+		/* Safari and Chrome */
+		display: "block";
+		width: "auto";
+	}
+	.blazer-extras {
+		--slide-width: calc(
+			(90% - (var(--slides-to-show) - 1) * var(--slide-gap)) /
+				var(--slides-to-show)
+		) !important;
+	}
 }
 
 body,
 html,
 * {
-    @apply scrollbar-hide;
+	@apply scrollbar-hide;
 }
 .PopoverContent {
-    width: var(--radix-popover-trigger-width);
-    max-height: var(--radix-popover-content-available-height);
+	width: var(--radix-popover-trigger-width);
+	max-height: var(--radix-popover-content-available-height);
 }

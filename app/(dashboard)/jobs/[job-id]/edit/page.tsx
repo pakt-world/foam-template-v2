@@ -10,18 +10,19 @@ import { PageLoading } from "@/components/common/page-loading";
 import { EditJobForm } from "@/components/forms/edit-job";
 
 interface Props {
-    params: {
-        "job-id": string;
-    };
+	params: {
+		"job-id": string;
+	};
 }
 
 export default function EditJobPage({ params }: Props): React.JSX.Element {
-    const jobId = params["job-id"];
-    const jobQuery = useGetJobById({ jobId });
+	const jobId = params["job-id"];
+	const jobQuery = useGetJobById({ jobId });
 
-    if (jobQuery.isError) return <PageError className="absolute inset-0" />;
-    if (jobQuery.isLoading) return <PageLoading className="absolute inset-0" color="#007C5B" />;
-    const { data: job } = jobQuery;
+	if (jobQuery.isError) return <PageError className="absolute inset-0" />;
+	if (jobQuery.isLoading)
+		return <PageLoading className="absolute inset-0" color="#007C5B" />;
+	const { data: job } = jobQuery;
 
-    return <EditJobForm job={job} />;
+	return <EditJobForm job={job} />;
 }

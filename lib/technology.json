@@ -1,54 +1,54 @@
 [
-    {
-        "name": "React",
-        "type": "JavaScript library for building user interfaces"
-    },
-    {
-        "name": "Next.js",
-        "type": "React framework for server-side rendering and static site generation"
-    },
-    {
-        "name": "jQuery",
-        "type": "JavaScript library for DOM manipulation"
-    },
-    {
-        "name": "Lodash",
-        "type": "JavaScript utility library"
-    },
-    {
-        "name": "Bootstrap",
-        "type": "CSS framework for responsive design"
-    },
-    {
-        "name": "Tailwind CSS",
-        "type": "Utility-first CSS framework"
-    },
-    {
-        "name": "Material-UI",
-        "type": "React UI framework with custom styling"
-    },
-    {
-        "name": "Sass",
-        "type": "CSS preprocessor for extended styling features"
-    },
-    {
-        "name": "Styled-components",
-        "type": "JavaScript library for styling React components"
-    },
-    {
-        "name": "Vue.js",
-        "type": "JavaScript framework for building UIs and single-page applications"
-    },
-    {
-        "name": "Angular",
-        "type": "JavaScript framework for building web applications"
-    },
-    {
-        "name": "D3.js",
-        "type": "JavaScript library for data visualizations"
-    },
-    {
-        "name": "Three.js",
-        "type": "JavaScript library for 3D graphics"
-    }
+	{
+		"name": "React",
+		"type": "JavaScript library for building user interfaces"
+	},
+	{
+		"name": "Next.js",
+		"type": "React framework for server-side rendering and static site generation"
+	},
+	{
+		"name": "jQuery",
+		"type": "JavaScript library for DOM manipulation"
+	},
+	{
+		"name": "Lodash",
+		"type": "JavaScript utility library"
+	},
+	{
+		"name": "Bootstrap",
+		"type": "CSS framework for responsive design"
+	},
+	{
+		"name": "Tailwind CSS",
+		"type": "Utility-first CSS framework"
+	},
+	{
+		"name": "Material-UI",
+		"type": "React UI framework with custom styling"
+	},
+	{
+		"name": "Sass",
+		"type": "CSS preprocessor for extended styling features"
+	},
+	{
+		"name": "Styled-components",
+		"type": "JavaScript library for styling React components"
+	},
+	{
+		"name": "Vue.js",
+		"type": "JavaScript framework for building UIs and single-page applications"
+	},
+	{
+		"name": "Angular",
+		"type": "JavaScript framework for building web applications"
+	},
+	{
+		"name": "D3.js",
+		"type": "JavaScript library for data visualizations"
+	},
+	{
+		"name": "Three.js",
+		"type": "JavaScript library for 3D graphics"
+	}
 ]

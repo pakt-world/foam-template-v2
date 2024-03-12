@@ -19,28 +19,30 @@ import { NumericInput } from "@/components/common/numeric-input";
 type FormValues = z.infer<typeof createJobSchema>;
 
 interface JobProposedPriceProps {
-    form: UseFormReturn<FormValues>;
+	form: UseFormReturn<FormValues>;
 }
 
 const JobProposedPrice = ({ form }: JobProposedPriceProps): ReactElement => {
-    return (
-        <div className="relative">
-            <div className="flex h-[45px] items-center rounded-lg border-[#198155] bg-[#ECFCE5] p-2 text-primary">
-                <DollarIcon />
-                <NumericInput
-                    type="text"
-                    {...form.register("budget")}
-                    placeholder="Enter Proposed Price"
-                    className="h-full  bg-transparent text-base placeholder:text-primary focus:outline-none"
-                />
-            </div>
-            <span className="absolute -bottom-5 flex w-full">
-                {form.formState.errors.budget?.message != null && (
-                    <span className="text-sm text-red-200">{form.formState.errors.budget?.message}</span>
-                )}
-            </span>
-        </div>
-    );
+	return (
+		<div className="relative">
+			<div className="flex h-[45px] items-center rounded-lg border-[#198155] bg-[#ECFCE5] p-2 text-primary">
+				<DollarIcon />
+				<NumericInput
+					type="text"
+					{...form.register("budget")}
+					placeholder="Enter Proposed Price"
+					className="h-full  bg-transparent text-base placeholder:text-primary focus:outline-none"
+				/>
+			</div>
+			<span className="absolute -bottom-5 flex w-full">
+				{form.formState.errors.budget?.message != null && (
+					<span className="text-sm text-red-200">
+						{form.formState.errors.budget?.message}
+					</span>
+				)}
+			</span>
+		</div>
+	);
 };
 
 export default JobProposedPrice;
